@@ -10,6 +10,7 @@ import {
 } from "@phosphor-icons/react"
 import { MotionConfig } from "motion/react"
 import { Fragment, useCallback, useEffect, useMemo, useState } from "react"
+import { usePathname } from "next/navigation"
 
 // Examples
 import EffectAcquireRelease from "@/examples/effect-acquire-release"
@@ -120,7 +121,6 @@ function AppContentInner() {
     [],
   )
 
-  // Memoize the examples for NavigationSidebar to prevent re-renders
   const navigationExamples = useMemo(
     () =>
       appItems
@@ -133,6 +133,30 @@ function AppContentInner() {
         })),
     [],
   )
+
+  const exampleIdSet = useMemo(() => new Set(navigationExamples.map(example => example.id)), [
+    navigationExamples,
+  ])
+
+  const pathname = usePathname()
+
+  useEffect(() => {
+    if (!pathname) return
+    const segments = pathname.split("/").filter(Boolean)
+
+    if (segments.length === 0) {
+      setCurrentExampleId(undefined)
+      return
+    }
+
+    const targetId = decodeURIComponent(segments[segments.length - 1]!)
+    if (!exampleIdSet.has(targetId)) return
+
+    window.requestAnimationFrame(() => {
+      // RequestAnimationFrame ensures the DOM is ready before attempting to scroll.
+      handleExampleSelect(targetId)
+    })
+  }, [pathname, exampleIdSet, handleExampleSelect])
 
   return (
     <div className="min-h-screen bg-neutral-950 text-white font-mono relative overflow-hidden">
