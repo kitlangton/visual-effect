@@ -177,33 +177,7 @@ export const examplesManifest: Array<ExampleMeta> = [
   },
 ]
 
-// Section callout content
-export const sectionCallouts: Partial<Record<ExampleMeta["section"], string>> = {}
-//   {
-//     "error handling": `**Error Handling** in Effect is **type-safe** and **composable**. Effects track potential errors at the type level, enabling precise error recovery and handling strategies.
-
-// Effect provides powerful tools like **catchAll**, **catchTag**, **retry**, and **either** to handle different failure scenarios. Errors are tracked as union types, ensuring you know exactly what can go wrong and handle it appropriately.`,
-
-//     schedule: `**Scheduling** enables **repeating** and **retrying** effects with sophisticated timing control. Schedules are composable patterns that define when and how often effects should execute.
-
-// Use schedules to implement **retry policies** for resilient error handling, **repetition patterns** for recurring tasks, and **complex timing behaviors** by combining simple schedules into sophisticated recurrence patterns.`,
-
-//     ref: `**Refs** are Effect's solution for **state management** in concurrent applications. They enable safe communication and shared state between different fibers in your program.
-
-// Unlike regular variables, refs provide **controlled state updates** that work safely across concurrent operations, ensuring consistency even when multiple fibers access the same state simultaneously.`,
-
-//     scope: `**Scopes** represent the **lifetime of resources** and ensure efficient cleanup and safe resource handling. They manage a stack of **finalizers** that define how to release resources.
-
-// The key guarantee is that finalizers are executed **no matter what** — whether the effect succeeds, fails, dies, or is interrupted.`,
-//   };
-
 // Helper function to get metadata by ID
 export function getExampleMeta(id: string): ExampleMeta | undefined {
   return examplesManifest.find(meta => meta.id === id)
-}
-
-// Helper function to load example component dynamically
-export async function loadExampleComponent(id: string) {
-  const mod = await import(`../examples/${id}`)
-  return mod.default
 }

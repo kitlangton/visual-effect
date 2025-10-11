@@ -8,7 +8,6 @@ export * from "./taskUtils"
 export type { AnimationValues } from "./useEffectAnimations"
 export {
   useEffectAnimations,
-  useEffectAnimations as useTaskAnimations,
   useRunningAnimation,
   useStateAnimations,
 } from "./useEffectAnimations"

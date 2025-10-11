@@ -145,7 +145,6 @@ src/
 │   ├── content/            # Content components
 │   │   ├── CodeBlock.tsx   # Syntax-highlighted code
 │   │   ├── HeaderView.tsx  # Example headers
-│   │   ├── InfoCallout.tsx # Info callouts
 │   │   └── Timer.tsx       # Timing displays
 │   ├── display/            # Display components
 │   │   ├── EffectExample.tsx # Main example wrapper

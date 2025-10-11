@@ -244,7 +244,7 @@ const HeaderViewComponent = forwardRef<HeaderViewRef, HeaderViewProps<unknown, u
                       : isFailed
                         ? TASK_COLORS.error
                         : isDeath
-                          ? "#991b1b"
+                          ? TASK_COLORS.death
                           : TASK_COLORS.idle,
           }}
           transition={{

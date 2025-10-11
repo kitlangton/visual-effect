@@ -5,6 +5,7 @@ export const TASK_COLORS = {
   success: "var(--color-green-700)",
   error: "#ef4444",
   interrupted: "var(--color-orange-500)",
+  death: "#991b1b",
 } as const
 
 export const GLOW_COLORS = {

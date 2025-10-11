@@ -10,7 +10,7 @@ import type { VisualRef } from "../../VisualRef"
 import type { VisualScope } from "../../VisualScope"
 import { EffectNode } from "../effect"
 import { FloatingHighlight } from "../feedback"
-import { ScopeStack } from "../scope"
+import { ScopeStack } from "../scope/ScopeStack"
 import { RefDisplay, ScheduleTimeline } from "./"
 
 export interface EffectHighlight {

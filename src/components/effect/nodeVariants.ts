@@ -51,7 +51,7 @@ export const nodeVariants = {
   },
 
   death: {
-    backgroundColor: "#991b1b",
+    backgroundColor: TASK_COLORS.death,
     scale: 1,
     opacity: 1,
     transition: {

@@ -1,17 +1,13 @@
-// Layout components
-
 // Content components
 export * from "./CodeBlock"
+export * from "./HeaderView"
 // Display components
 export * from "./display"
+// Effect visualization
 export * from "./effect"
 // Feedback components
 export * from "./feedback"
-export * from "./HeaderView"
-export * from "./InfoCallout"
-export * from "./layout"
-// Specialized subsystems (already organized)
+// Renderers
 export * from "./renderers"
-export * from "./scope"
 // UI components
 export * from "./ui"

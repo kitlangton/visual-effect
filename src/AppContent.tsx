@@ -74,17 +74,17 @@ const exampleComponentById: Record<string, ExampleComponent> = {
 }
 
 import { EffectLogo } from "@/components/feedback"
-import { NavigationSidebar, PageHeader } from "@/components/layout"
+import { NavigationSidebar } from "@/components/layout/NavigationSidebar"
+import { PageHeader } from "@/components/layout/PageHeader"
 import { QuickOpen } from "@/components/ui"
-import type { AppItem, ExampleItem } from "@/lib/example-types"
+import type { AppItem } from "@/lib/example-types"
 import { defaultSpring } from "@/motionConfig"
 import { appItems, createExampleId } from "@/shared/appItems"
 import { taskSounds } from "@/sounds/TaskSounds"
-import { InfoCallout } from "./components/InfoCallout"
 
 // Helper function to get item section
 function getItemSection(item: AppItem): string {
-  return item.type === "example" ? item.metadata.section : item.section
+  return item.metadata.section
 }
 
 function AppContentInner() {
@@ -107,35 +107,20 @@ function AppContentInner() {
     }
   }, [])
 
-  // Prepare data for the Command-K quick-open modal
-  const quickOpenItems = useMemo(
+  // Prepare example metadata once for both navigation and quick-open
+  const exampleDisplayItems = useMemo(
     () =>
-      appItems
-        .filter((item): item is ExampleItem => item.type === "example")
-        .map(item => ({
-          id: createExampleId(item.metadata.name, item.metadata.variant),
-          name: item.metadata.name,
-          ...(item.metadata.variant ? { variant: item.metadata.variant } : {}),
-          section: item.metadata.section,
-        })),
+      appItems.map(item => ({
+        id: createExampleId(item.metadata.name, item.metadata.variant),
+        name: item.metadata.name,
+        ...(item.metadata.variant ? { variant: item.metadata.variant } : {}),
+        section: item.metadata.section,
+      })),
     [],
   )
 
-  const navigationExamples = useMemo(
-    () =>
-      appItems
-        .filter((item): item is ExampleItem => item.type === "example")
-        .map(item => ({
-          id: createExampleId(item.metadata.name, item.metadata.variant),
-          name: item.metadata.name,
-          ...(item.metadata.variant ? { variant: item.metadata.variant } : {}),
-          section: item.metadata.section,
-        })),
-    [],
-  )
-
-  const exampleIdSet = useMemo(() => new Set(navigationExamples.map(example => example.id)), [
-    navigationExamples,
+  const exampleIdSet = useMemo(() => new Set(exampleDisplayItems.map(example => example.id)), [
+    exampleDisplayItems,
   ])
 
   const pathname = usePathname()
@@ -161,12 +146,12 @@ function AppContentInner() {
   return (
     <div className="min-h-screen bg-neutral-950 text-white font-mono relative overflow-hidden">
       {/* Command-K quick-open modal */}
-      <QuickOpen items={quickOpenItems} onSelect={handleExampleSelect} />
+      <QuickOpen items={exampleDisplayItems} onSelect={handleExampleSelect} />
 
       <div className="max-w-screen-l mx-auto relative">
         {/* Navigation Sidebar */}
         <NavigationSidebar
-          examples={navigationExamples}
+          examples={exampleDisplayItems}
           currentExample={currentExampleId || undefined}
           onExampleSelect={handleExampleSelect}
         />
@@ -228,27 +213,18 @@ function AppContentInner() {
                         </h2>
                       </div>
                     )}
-                    <div className="w-full relative">
-                      {item.type === "example" ? (
-                        <div id={createExampleId(item.metadata.name, item.metadata.variant)}>
-                          {(() => {
-                            const Component = exampleComponentById[item.metadata.id]
-                            if (!Component) return null
-                            return (
-                              <Component
-                                metadata={item.metadata}
-                                index={index}
-                                exampleId={createExampleId(
-                                  item.metadata.name,
-                                  item.metadata.variant,
-                                )}
-                              />
-                            )
-                          })()}
-                        </div>
-                      ) : (
-                        <InfoCallout>{item.content}</InfoCallout>
-                      )}
+                    <div className="w-full relative" id={createExampleId(item.metadata.name, item.metadata.variant)}>
+                      {(() => {
+                        const Component = exampleComponentById[item.metadata.id]
+                        if (!Component) return null
+                        return (
+                          <Component
+                            metadata={item.metadata}
+                            index={index}
+                            exampleId={createExampleId(item.metadata.name, item.metadata.variant)}
+                          />
+                        )
+                      })()}
                     </div>
                   </Fragment>
                 )

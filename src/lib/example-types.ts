@@ -13,15 +13,9 @@ export interface ExampleComponentProps {
   exampleId: string
 }
 
-export interface InfoCalloutItem {
-  type: "callout"
-  content: string
-  section: ExampleMeta["section"]
-}
-
 export interface ExampleItem {
   type: "example"
   metadata: ExampleMeta
 }
 
-export type AppItem = ExampleItem | InfoCalloutItem
+export type AppItem = ExampleItem
