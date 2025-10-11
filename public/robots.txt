@@ -1,0 +1,7 @@
+# robots.txt for Visual Effect
+
+User-agent: *
+Allow: /
+
+# Sitemap location
+Sitemap: https://effect.kitlangton.com/sitemap.xml

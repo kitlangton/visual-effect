@@ -1,0 +1,82 @@
+{
+  "name": "visual-effect",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "sideEffects": false,
+  "license": "MIT",
+  "description": "Interactive visual state machine for Effect (effect-ts) with a Next.js + React demo and Tone.js sound cues.",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/kitlangton/visual-effect.git"
+  },
+  "homepage": "https://github.com/kitlangton/visual-effect#readme",
+  "bugs": {
+    "url": "https://github.com/kitlangton/visual-effect/issues"
+  },
+  "author": "Kit Langton",
+  "keywords": [
+    "effect",
+    "effect-ts",
+    "react",
+    "nextjs",
+    "tonejs",
+    "state-machine",
+    "visualization",
+    "typescript"
+  ],
+  "engines": {
+    "node": ">=20",
+    "pnpm": ">=10"
+  },
+  "scripts": {
+    "dev": "next dev",
+    "prebuild": "tsx scripts/generate-og-images.tsx",
+    "build": "next build",
+    "start": "next start",
+    "lint": "biome lint .",
+    "lint-fix": "biome lint . --apply",
+    "format": "biome format . --write",
+    "check": "biome check .",
+    "check-fix": "biome check . --write",
+    "preview": "next start",
+    "test": "vitest",
+    "typecheck": "tsc --noEmit",
+    "type-check": "tsc --noEmit",
+    "generate-og-images": "tsx scripts/generate-og-images.tsx",
+    "fix": "biome check . --write && npm run typecheck",
+    "clean": "biome format . --write && biome lint . --write && npm run typecheck",
+    "verify": "biome check . && npm run typecheck && npm run test",
+    "ready": "npm run clean && npm run build"
+  },
+  "dependencies": {
+    "@phosphor-icons/react": "^2.1.10",
+    "@vercel/analytics": "^1.5.0",
+    "effect": "^3.18.4",
+    "motion": "^12.23.24",
+    "next": "^15.5.4",
+    "prism-react-renderer": "^2.4.1",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
+    "react-markdown": "^10.1.0",
+    "remark-gfm": "^4.0.1",
+    "tone": "^15.1.22"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "2.2.5",
+    "@effect/language-service": "^0.44.0",
+    "@resvg/resvg-js": "^2.6.2",
+    "@tailwindcss/postcss": "^4.1.14",
+    "@types/node": "^24.7.1",
+    "@types/react": "^19.2.2",
+    "@types/react-dom": "^19.2.1",
+    "@vitest/ui": "^3.2.4",
+    "jsdom": "^27.0.0",
+    "satori": "^0.18.3",
+    "tailwindcss": "^4.1.14",
+    "tsx": "^4.20.6",
+    "typescript": "~5.9.3",
+    "vitest": "^3.2.4"
+  },
+  "packageManager": "pnpm@10.14.0"
+}

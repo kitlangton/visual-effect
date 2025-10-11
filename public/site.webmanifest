@@ -1,0 +1,11 @@
+{
+  "name": "Visual Effect - Interactive Effect Library Visualizer",
+  "short_name": "Visual Effect",
+  "description": "An interactive visualization tool for the Effect library that demonstrates how Effect operations execute over time with animated visual representations and synchronized sound effects.",
+  "theme_color": "#000000",
+  "background_color": "#000000",
+  "display": "standalone",
+  "start_url": "/",
+  "scope": "/",
+  "orientation": "portrait-primary"
+}
