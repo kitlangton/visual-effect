@@ -148,16 +148,10 @@ export const colors = {
 
 // Transform and filter values
 export const effects = {
-  // Blur transforms
-  blur: {
-    velocityRange: [-100, 0, 100] as const,
-    blurRange: [1, 0, 1] as const,
-  },
   // Death filter effects
   death: {
     contrast: 1.2,
     brightness: 0.8,
-    glowMultiplier: 2,
   },
   // Glitch intensity ranges
   glitch: {
@@ -167,15 +161,3 @@ export const effects = {
     intensePulseMax: 10,
   },
 }
-
-// Combined export for convenience
-export const animationTokens = {
-  defaultSpring,
-  springs,
-  shake,
-  timing,
-  colors,
-  effects,
-} as const
-
-export type AnimationTokens = typeof animationTokens
