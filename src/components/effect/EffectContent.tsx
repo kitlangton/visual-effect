@@ -1,16 +1,17 @@
 import { SkullIcon, StarFourIcon, WarningOctagonIcon } from "@phosphor-icons/react"
 import { AnimatePresence, motion } from "motion/react"
 import { useLayoutEffect, useRef } from "react"
+import { springs } from "@/animations"
 import { theme } from "../../theme"
 import type { VisualEffect } from "../../VisualEffect"
 import { isRenderableResult, renderResult } from "../renderers"
-import type { AnimationValues } from "./useEffectAnimations"
+import type { EffectMotionValues } from "./useEffectMotion"
 
 type EffectState = VisualEffect<unknown, unknown>["state"]
 
 interface EffectContentProps {
   state: EffectState
-  animations: Pick<AnimationValues, "contentOpacity" | "contentScale" | "nodeWidth">
+  motionValues: Pick<EffectMotionValues, "contentOpacity" | "contentScale" | "nodeWidth">
 }
 
 function TaskIcon({ size, type }: { type: string; size: number }) {
@@ -64,7 +65,7 @@ function TaskContentInner({ state }: { state: EffectState }) {
           animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
           exit={{ opacity: 0, scale: 0.5, filter: "blur(10px)" }}
           transition={{
-            ...theme.animation.bouncy,
+            ...springs.bouncy,
             stiffness: 260,
             damping: 18,
           }}
@@ -92,7 +93,7 @@ function TaskContentInner({ state }: { state: EffectState }) {
   }
 }
 
-export function EffectContent({ animations, state }: EffectContentProps) {
+export function EffectContent({ motionValues, state }: EffectContentProps) {
   const contentRef = useRef<HTMLDivElement>(null)
 
   // Auto-resize width based on content (synchronous, before paint)
@@ -101,10 +102,10 @@ export function EffectContent({ animations, state }: EffectContentProps) {
       const actualWidth = contentRef.current.scrollWidth
 
       if (actualWidth > 64 - 16) {
-        animations.nodeWidth.set(actualWidth + 24)
+        motionValues.nodeWidth.set(actualWidth + 24)
       }
     }
-  }, [state, animations.nodeWidth])
+  }, [state, motionValues.nodeWidth])
 
   return (
     <motion.div
@@ -116,8 +117,8 @@ export function EffectContent({ animations, state }: EffectContentProps) {
         justifyContent: "center",
         fontWeight: 600,
         color: theme.colors.textPrimary,
-        opacity: animations.contentOpacity,
-        scale: animations.contentScale,
+        opacity: motionValues.contentOpacity,
+        scale: motionValues.contentScale,
         padding: "0 8px",
       }}
     >

@@ -5,9 +5,10 @@ export { EffectNode } from "./EffectNode"
 export { EffectOverlay } from "./EffectOverlay"
 export { nodeVariants } from "./nodeVariants"
 export * from "./taskUtils"
-export type { AnimationValues } from "./useEffectAnimations"
+export type { EffectMotionValues } from "./useEffectMotion"
 export {
   useEffectAnimations,
+  useEffectMotion,
   useRunningAnimation,
   useStateAnimations,
-} from "./useEffectAnimations"
+} from "./useEffectMotion"

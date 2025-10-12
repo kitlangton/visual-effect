@@ -8,14 +8,15 @@ import {
   useVelocity,
 } from "motion/react"
 import { useEffect, useLayoutEffect, useRef, useState } from "react"
-import { animationTokens } from "../../animationTokens"
+import { springs, timing, colors, shake, effects } from "@/animations"
+import { dimensions } from "@/constants/dimensions"
 import { useStateTransition } from "../../hooks/useStateTransition"
 import { theme } from "../../theme"
 import type { VisualEffect } from "../../VisualEffect"
 
-type TaskState = VisualEffect<unknown, unknown>["state"]
+type EffectState = VisualEffect<unknown, unknown>["state"]
 
-export interface AnimationValues {
+export interface EffectMotionValues {
   nodeWidth: MotionValue<number>
   nodeHeight: MotionValue<number>
   contentOpacity: MotionValue<number>
@@ -60,25 +61,22 @@ function usePrefersReducedMotion() {
 }
 
 // ------------------------
-// useTaskAnimations
+// useEffectMotion
 // ------------------------
-export function useTaskAnimations(): AnimationValues {
-  const nodeWidth = useSpring(
-    animationTokens.dimensions.nodeDefaults.width,
-    animationTokens.springs.nodeWidth,
-  )
-  const contentOpacity = useSpring(1, animationTokens.springs.default)
+export function useEffectMotion(): EffectMotionValues {
+  const nodeWidth = useSpring(dimensions.node.width, springs.nodeWidth)
+  const contentOpacity = useSpring(1, springs.default)
   const flashOpacity = useMotionValue(0)
-  const flashColor = useMotionValue<string>(animationTokens.colors.flash)
-  const borderRadius = useSpring(theme.radius.md, animationTokens.springs.default)
+  const flashColor = useMotionValue<string>(colors.flash)
+  const borderRadius = useSpring(theme.radius.md, springs.default)
   const nodeHeight = useMotionValue(64)
   const rotation = useMotionValue(0)
   const shakeX = useMotionValue(0)
   const shakeY = useMotionValue(0)
-  const contentScale = useSpring(1, animationTokens.springs.default)
-  const borderColor = useMotionValue<string>(animationTokens.colors.border.default)
-  const borderOpacity = useSpring(1, animationTokens.springs.default)
-  const glowIntensity = useSpring(0, animationTokens.springs.default)
+  const contentScale = useSpring(1, springs.default)
+  const borderColor = useMotionValue<string>(colors.border.default)
+  const borderOpacity = useSpring(1, springs.default)
+  const glowIntensity = useSpring(0, springs.default)
 
   const rotationVelocity = useVelocity(rotation)
 
@@ -87,7 +85,7 @@ export function useTaskAnimations(): AnimationValues {
   const blurAmount = useTransform(rotationVelocity, [-100, 0, 100], [1, 0, 1], { clamp: true })
 
   // Stable container without eslint disables
-  const animations = useConst<AnimationValues>(() => ({
+  const motionValues = useConst<EffectMotionValues>(() => ({
     nodeWidth,
     nodeHeight,
     contentOpacity,
@@ -104,7 +102,7 @@ export function useTaskAnimations(): AnimationValues {
     glowIntensity,
   }))
 
-  return animations
+  return motionValues
 }
 
 // ------------------------
@@ -112,8 +110,8 @@ export function useTaskAnimations(): AnimationValues {
 // ------------------------
 export function useRunningAnimation(
   isRunning: boolean,
-  animations: Pick<
-    AnimationValues,
+  motionValues: Pick<
+    EffectMotionValues,
     "rotation" | "shakeX" | "shakeY" | "borderOpacity" | "glowIntensity"
   >,
 ) {
@@ -132,20 +130,20 @@ export function useRunningAnimation(
       if (animControls.glow) animControls.glow.stop()
       if (rafId !== null) cancelAnimationFrame(rafId)
       // reset quickly
-      animate(animations.rotation, 0, {
-        duration: animationTokens.timing.exit.duration,
-        ease: animationTokens.timing.exit.ease,
+      animate(motionValues.rotation, 0, {
+        duration: timing.exit.duration,
+        ease: timing.exit.ease,
       })
-      animate(animations.shakeX, 0, {
-        duration: animationTokens.timing.exit.duration,
-        ease: animationTokens.timing.exit.ease,
+      animate(motionValues.shakeX, 0, {
+        duration: timing.exit.duration,
+        ease: timing.exit.ease,
       })
-      animate(animations.shakeY, 0, {
-        duration: animationTokens.timing.exit.duration,
-        ease: animationTokens.timing.exit.ease,
+      animate(motionValues.shakeY, 0, {
+        duration: timing.exit.duration,
+        ease: timing.exit.ease,
       })
-      animations.borderOpacity.set(1)
-      animations.glowIntensity.set(0)
+      motionValues.borderOpacity.set(1)
+      motionValues.glowIntensity.set(0)
     }
 
     if (!isRunning || prefersReducedMotion) {
@@ -154,53 +152,42 @@ export function useRunningAnimation(
     }
 
     // border pulse
-    animControls.border = animate(
-      animations.borderOpacity,
-      [...animationTokens.timing.borderPulse.values],
-      {
-        duration: animationTokens.timing.borderPulse.duration,
-        ease: "easeInOut",
-        repeat: Infinity,
-      },
-    )
+    animControls.border = animate(motionValues.borderOpacity, [...timing.borderPulse.values], {
+      duration: timing.borderPulse.duration,
+      ease: "easeInOut",
+      repeat: Infinity,
+    })
 
     // glow pulse
-    animControls.glow = animate(
-      animations.glowIntensity,
-      [...animationTokens.timing.glowPulse.values],
-      {
-        duration: animationTokens.timing.glowPulse.duration,
-        ease: "easeInOut",
-        repeat: Infinity,
-      },
-    )
+    animControls.glow = animate(motionValues.glowIntensity, [...timing.glowPulse.values], {
+      duration: timing.glowPulse.duration,
+      ease: "easeInOut",
+      repeat: Infinity,
+    })
 
     const jitter = () => {
       if (cancelled) return
 
       const angle =
-        (Math.random() * animationTokens.shake.running.angleRange +
-          animationTokens.shake.running.angleBase) *
+        (Math.random() * shake.running.angleRange + shake.running.angleBase) *
         (Math.random() < 0.5 ? 1 : -1)
 
       const offset =
-        (Math.random() * animationTokens.shake.running.offsetRange +
-          animationTokens.shake.running.offsetBase) *
+        (Math.random() * shake.running.offsetRange + shake.running.offsetBase) *
         (Math.random() < 0.5 ? -1 : 1)
 
       const offsetY =
-        (Math.random() * animationTokens.shake.running.offsetYRange +
-          animationTokens.shake.running.offsetYBase) *
+        (Math.random() * shake.running.offsetYRange + shake.running.offsetYBase) *
         (Math.random() < 0.5 ? -1 : 1)
 
       // FIX: proper [min,max] duration
-      const min = animationTokens.shake.running.durationMin
-      const max = animationTokens.shake.running.durationMax ?? min * 2
+      const min = shake.running.durationMin
+      const max = shake.running.durationMax ?? min * 2
       const duration = min + Math.random() * Math.max(0.001, max - min)
 
-      const rot = animate(animations.rotation, angle, { duration, ease: "circInOut" })
-      const x = animate(animations.shakeX, offset, { duration, ease: "easeInOut" })
-      const y = animate(animations.shakeY, offsetY, { duration, ease: "easeInOut" })
+      const rot = animate(motionValues.rotation, angle, { duration, ease: "circInOut" })
+      const x = animate(motionValues.shakeX, offset, { duration, ease: "easeInOut" })
+      const y = animate(motionValues.shakeY, offsetY, { duration, ease: "easeInOut" })
 
       // When this triple finishes, schedule next cycle on next frame
       Promise.all([rot.finished, x.finished, y.finished]).then(() => {
@@ -217,52 +204,52 @@ export function useRunningAnimation(
     }
   }, [
     isRunning,
-    animations.rotation,
-    animations.shakeX,
-    animations.shakeY,
-    animations.borderOpacity,
-    animations.glowIntensity,
+    motionValues.rotation,
+    motionValues.shakeX,
+    motionValues.shakeY,
+    motionValues.borderOpacity,
+    motionValues.glowIntensity,
   ])
 }
 
 // ------------------------
 // useStateAnimations
 // ------------------------
-export function useStateAnimations(state: TaskState, animations: AnimationValues) {
+export function useStateAnimations(state: EffectState, motionValues: EffectMotionValues) {
   const isRunning = state.type === "running"
 
   // Radius
   useEffect(() => {
-    animations.borderRadius.set(isRunning ? 15 : theme.radius.md)
-  }, [isRunning, animations.borderRadius])
+    motionValues.borderRadius.set(isRunning ? 15 : theme.radius.md)
+  }, [isRunning, motionValues.borderRadius])
 
   // Height
   useEffect(() => {
-    animate(animations.nodeHeight, isRunning ? 64 * 0.4 : 64, {
+    animate(motionValues.nodeHeight, isRunning ? 64 * 0.4 : 64, {
       duration: 0.4,
       bounce: isRunning ? 0.3 : 0.5,
       type: "spring",
     })
-  }, [isRunning, animations.nodeHeight])
+  }, [isRunning, motionValues.nodeHeight])
 
   // Width & content opacity
   useEffect(() => {
     const hasResult = state.type === "completed"
 
     if (!hasResult) {
-      animations.nodeWidth.set(64) // if you want this animated, swap to animate(...)
+      motionValues.nodeWidth.set(64) // if you want this animated, swap to animate(...)
     }
 
-    animations.contentOpacity.set(hasResult ? 1 : state.type === "running" ? 0 : 1)
-  }, [state, animations, isRunning])
+    motionValues.contentOpacity.set(hasResult ? 1 : state.type === "running" ? 0 : 1)
+  }, [state, motionValues, isRunning])
 }
 
 // ------------------------
 // useEffectAnimations
 // ------------------------
 export function useEffectAnimations(
-  state: TaskState,
-  animations: AnimationValues,
+  state: EffectState,
+  motionValues: EffectMotionValues,
   isHovering: boolean,
   setShowErrorBubble: (show: boolean) => void,
 ) {
@@ -291,17 +278,17 @@ export function useEffectAnimations(
   const transition = useStateTransition(state)
   useEffect(() => {
     if (transition.justCompleted || transition.justStarted) {
-      const up = animate(animations.flashOpacity, 0.6, {
+      const up = animate(motionValues.flashOpacity, 0.6, {
         duration: 0.02,
         ease: "circOut",
       })
       up.finished.then(() => {
         if (prefersReducedMotion) {
-          animations.flashOpacity.set(0)
+          motionValues.flashOpacity.set(0)
         } else {
-          animate(animations.flashOpacity, 0, {
-            duration: animationTokens.timing.flash.duration,
-            ease: animationTokens.timing.flash.ease,
+          animate(motionValues.flashOpacity, 0, {
+            duration: timing.flash.duration,
+            ease: timing.flash.ease,
           })
         }
       })
@@ -309,7 +296,7 @@ export function useEffectAnimations(
   }, [
     transition.justCompleted,
     transition.justStarted,
-    animations.flashOpacity,
+    motionValues.flashOpacity,
     prefersReducedMotion,
   ])
 
@@ -320,8 +307,7 @@ export function useEffectAnimations(
     let cancelled = false
 
     const shakeSequence = async () => {
-      const { intensity, duration, count, rotationRange, returnDuration } =
-        animationTokens.shake.failure
+      const { intensity, duration, count, rotationRange, returnDuration } = shake.failure
 
       for (let i = 0; i < count && !cancelled; i++) {
         const xOffset = (Math.random() - 0.5) * intensity
@@ -329,18 +315,18 @@ export function useEffectAnimations(
         const rotOffset = (Math.random() - 0.5) * rotationRange
 
         const anims = [
-          animate(animations.shakeX, xOffset, { duration, ease: "easeInOut" }),
-          animate(animations.shakeY, yOffset, { duration, ease: "easeInOut" }),
-          animate(animations.rotation, rotOffset, { duration, ease: "easeInOut" }),
+          animate(motionValues.shakeX, xOffset, { duration, ease: "easeInOut" }),
+          animate(motionValues.shakeY, yOffset, { duration, ease: "easeInOut" }),
+          animate(motionValues.rotation, rotOffset, { duration, ease: "easeInOut" }),
         ]
         await Promise.all(anims.map(a => a.finished))
       }
 
       if (!cancelled) {
         await Promise.all([
-          animate(animations.shakeX, 0, { duration: returnDuration, ease: "easeOut" }).finished,
-          animate(animations.shakeY, 0, { duration: returnDuration, ease: "easeOut" }).finished,
-          animate(animations.rotation, 0, { duration: returnDuration, ease: "easeOut" }).finished,
+          animate(motionValues.shakeX, 0, { duration: returnDuration, ease: "easeOut" }).finished,
+          animate(motionValues.shakeY, 0, { duration: returnDuration, ease: "easeOut" }).finished,
+          animate(motionValues.rotation, 0, { duration: returnDuration, ease: "easeOut" }).finished,
         ])
       }
     }
@@ -349,12 +335,12 @@ export function useEffectAnimations(
     return () => {
       cancelled = true
     }
-  }, [state, prefersReducedMotion, animations.shakeX, animations.shakeY, animations.rotation])
+  }, [state, prefersReducedMotion, motionValues.shakeX, motionValues.shakeY, motionValues.rotation])
 
   // Death glitch
   useEffect(() => {
     if (state.type !== "death" || prefersReducedMotion) {
-      animations.glowIntensity.set(0)
+      motionValues.glowIntensity.set(0)
       return
     }
 
@@ -374,13 +360,13 @@ export function useEffectAnimations(
     }
 
     const glitchSequence = async () => {
-      const t = animationTokens.timing.glitch
-      const e = animationTokens.effects.glitch
+      const t = timing.glitch
+      const e = effects.glitch
 
       // initial pulses
       for (let i = 0; i < t.initialCount && !cancelled; i++) {
-        animations.contentScale.set(1 + Math.random() * e.scaleRange)
-        animations.glowIntensity.set(Math.random() * e.intensePulseMax)
+        motionValues.contentScale.set(1 + Math.random() * e.scaleRange)
+        motionValues.glowIntensity.set(Math.random() * e.intensePulseMax)
 
         await new Promise<void>(resolve => {
           scheduleIdle(
@@ -390,8 +376,8 @@ export function useEffectAnimations(
         })
 
         if (cancelled) break
-        animations.contentScale.set(1)
-        animations.glowIntensity.set(e.glowMax)
+        motionValues.contentScale.set(1)
+        motionValues.glowIntensity.set(e.glowMax)
 
         await new Promise<void>(resolve => {
           scheduleIdle(resolve, t.pauseMin + Math.random() * Math.max(0, t.pauseMax - t.pauseMin))
@@ -401,7 +387,7 @@ export function useEffectAnimations(
       // subtle loop (only one timeout pending at any time)
       const subtle = () => {
         if (cancelled) return
-        animations.glowIntensity.set(e.glowMin + Math.random() * (e.glowMax - e.glowMin))
+        motionValues.glowIntensity.set(e.glowMin + Math.random() * (e.glowMax - e.glowMin))
         scheduleIdle(
           subtle,
           t.subtleDelayMin + Math.random() * Math.max(0, t.subtleDelayMax - t.subtleDelayMin),
@@ -415,15 +401,15 @@ export function useEffectAnimations(
     return () => {
       cancelled = true
       if (timeoutId) clearTimeout(timeoutId)
-      animations.glowIntensity.set(0)
+      motionValues.glowIntensity.set(0)
     }
-  }, [state, prefersReducedMotion, animations.contentScale, animations.glowIntensity])
+  }, [state, prefersReducedMotion, motionValues.contentScale, motionValues.glowIntensity])
 
   // Content scale pop on completion
   useLayoutEffect(() => {
     if (transition.justCompleted) {
-      animations.contentScale.set(0)
-      animate(animations.contentScale, [1.3, 1], animationTokens.springs.contentScale)
-    } // <- removed stray 's'
-  }, [transition.justCompleted, animations.contentScale])
+      motionValues.contentScale.set(0)
+      animate(motionValues.contentScale, [1.3, 1], springs.contentScale)
+    }
+  }, [transition.justCompleted, motionValues.contentScale])
 }

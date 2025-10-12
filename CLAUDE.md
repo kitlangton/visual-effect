@@ -16,10 +16,11 @@ const myEffect = visualEffect("taskName", Effect.succeed(42));
 ```
 
 Key features:
-- **State tracking**: idle → running → completed/failed/interrupted
-- **Observable pattern**: React components can subscribe to state changes
+- **State tracking**: idle → running → completed/failed/interrupted/death
+- **Observable hooks**: React components subscribe via `useVisualEffectState`, `useVisualEffectNotification`, or `useVisualEffectSubscription`
 - **Effect caching**: Prevents re-execution of already completed effects
-- **Animation flags**: `justStarted` and `justCompleted` for transition animations
+- **Timer support**: Captures start/end timestamps when `showTimer` is enabled
+- **Notification helpers**: Effects can publish contextual messages through `notify(...)`
 - **Sound triggers**: Automatically plays sounds on state transitions
 
 ### 2. EffectNode Component
@@ -28,8 +29,8 @@ The `EffectNode` component renders individual effects as animated circles with:
 - Different colors for different states (idle, running, completed, failed)
 - Pulsing animations during execution
 - Result display using the renderer system
-- Responsive sizing (smaller on mobile via CSS transforms)
-- Enhanced accessibility with keyboard navigation support
+- Automatic width expansion when results overflow the default size
+- Overlay feedback for errors and notifications
 
 ### 3. Renderer System
 
@@ -48,9 +49,10 @@ class MyResult implements RenderableResult {
 Built-in renderers:
 - `NumberResult` - Simple number display
 - `StringResult` - Simple string display
-- `TemperatureResult` - Temperature with °F suffix
+- `BooleanResult` - True/false text badge
+- `TemperatureResult` - Temperature with a trailing ° symbol
 - `ObjectResult` - JSON stringified objects
-- `ArrayResult` - Array display with proper formatting
+- `ArrayResult` - Animated array summary (length indicator)
 - `EmojiResult` - Emoji-based results with enhanced visual appeal
 
 ### 4. Effect Examples
@@ -95,16 +97,15 @@ export function getWeather(location?: string) {
 
 ### 2. Responsive Design
 
-- Mobile-first approach with Tailwind breakpoints
-- Task nodes scale down on mobile (75% size)
-- Flexible layouts that wrap on small screens
-- Responsive typography and spacing
+- Layout built with Tailwind utility classes and Motion; flex containers wrap naturally on small screens
+- Sidebar navigation collapses on narrow viewports while the main content remains accessible
+- Typography and spacing scale using relative units for readability across devices
 
 ### 3. State Management
 
 - Each `VisualEffect` manages its own state
-- React components subscribe via `useVisualEffect` hook
-- Keyboard navigation state managed via `KeyboardNavigationContext`
+- React components subscribe via `useVisualEffectState`, `useVisualEffectNotification`, or `useVisualEffectSubscription`
+- Lightweight hooks (`useOptionKey`, `useStateTransition`, `useVisualScope`) handle UI-specific state
 - No global state management for effect execution
 - Effects persist across component re-renders
 
@@ -114,21 +115,16 @@ export function getWeather(location?: string) {
 - Spring animations for natural movement with configurable physics
 - Different animations for different state transitions
 - Hardware-accelerated transforms
-- Coordinated scroll animations for keyboard navigation
+- Dedicated sequences for running jitter, failure shakes, and death glitches
 
 ### 5. Sound System
 
 The application includes a synthesized sound system using Tone.js:
 
-- **Sound Design**:
-  - Success: Triangle wave synth with warm tone in higher octave
-  - Running: Soft sine wave with quick envelope
-  - Failure: Deep bass using sawtooth wave (2 octaves below base)
-  - Interrupted: Sharp square wave with immediate cutoff
-- **Musical Scale**: Uses C major pentatonic scale for harmonic coherence
-- **Audio Effects**: Reverb with 2.5s decay for spacious sound
-- **User Controls**: Mute toggle in header with animated slash icon
-- **Integration**: Sounds trigger automatically in `VisualEffect.setState()`
+- **Distinct cues**: Success, running, failure, interruption, reset, death, ref updates, finalizers, and notifications all receive unique tones
+- **Shared processing**: A centralized `taskSounds` module initializes synths, routing, and reverb once and gates playback behind a mute flag
+- **User controls**: The header exposes an ON/OFF toggle that updates the mute state and plays a confirmation chime when sound is enabled
+- **Integration**: `VisualEffect.setState()` and companion helpers trigger the appropriate cues during state transitions
 
 ## File Structure
 
@@ -141,55 +137,64 @@ app/                         # Next.js App Router
 └── ClientAppContent.tsx    # Client-side app content
 
 src/
+├── animations.ts           # Shared animation tokens
+├── AppContent.tsx          # Main app component
 ├── components/
-│   ├── content/            # Content components
-│   │   ├── CodeBlock.tsx   # Syntax-highlighted code
-│   │   ├── HeaderView.tsx  # Example headers
-│   │   └── Timer.tsx       # Timing displays
+│   ├── CodeBlock.tsx       # Syntax-highlighted code
+│   ├── HeaderView.tsx      # Example headers + controls
+│   ├── ScheduleTimeline.tsx # Scheduling visualizer
+│   ├── Timer.tsx           # Elapsed time labels
 │   ├── display/            # Display components
 │   │   ├── EffectExample.tsx # Main example wrapper
 │   │   └── RefDisplay.tsx  # Ref visualizations
-│   ├── effect/             # Effect visualization
-│   │   ├── EffectNode.tsx  # Visual effect nodes
-│   │   ├── EffectOverlay.tsx # Interactive overlays
-│   │   └── taskUtils.ts    # Effect utilities
+│   ├── effect/             # Effect visualization primitives
+│   │   ├── EffectNode.tsx
+│   │   ├── EffectOverlay.tsx
+│   │   ├── taskUtils.ts
+│   │   └── useEffectMotion.ts
 │   ├── feedback/           # User feedback
-│   │   ├── DeathBubble.tsx # Death animations
-│   │   ├── FailureBubble.tsx # Failure feedback
-│   │   └── NotificationBubble.tsx # Notifications
+│   │   ├── DeathBubble.tsx
+│   │   ├── FailureBubble.tsx
+│   │   └── NotificationBubble.tsx
 │   ├── layout/             # Layout components
-│   │   ├── NavigationSidebar.tsx # Side navigation
-│   │   └── PageHeader.tsx  # Page headers
+│   │   ├── NavigationSidebar.tsx
+│   │   └── PageHeader.tsx
 │   ├── renderers/          # Result rendering system
-│   │   ├── ArrayResult.tsx # Array display
-│   │   ├── BasicRenderers.tsx # Basic types
-│   │   ├── EmojiResult.tsx # Emoji results
-│   │   └── TemperatureResult.tsx # Temperature display
-│   ├── scope/              # Scope visualization
-│   │   ├── FinalizerCard.tsx # Finalizer display
-│   │   └── ScopeStack.tsx  # Scope stack
-│   └── ui/                 # UI components
-│       ├── QuickOpen.tsx   # Command-K search
-│       ├── SegmentedControl.tsx # Control inputs
-│       └── VolumeToggle.tsx # Audio controls
-├── contexts/
-│   └── KeyboardNavigationContext.tsx # Navigation state
+│   │   ├── ArrayResult.tsx
+│   │   ├── BasicRenderers.tsx
+│   │   ├── EmojiResult.tsx
+│   │   └── TemperatureResult.tsx
+│   ├── scope/
+│   │   ├── FinalizerCard.tsx
+│   │   └── ScopeStack.tsx
+│   └── ui/
+│       ├── QuickOpen.tsx
+│       ├── SegmentedControl.tsx
+│       └── VolumeToggle.tsx
+├── constants/
+│   ├── colors.ts
+│   └── dimensions.ts
 ├── examples/               # Effect examples
 │   ├── helpers.ts          # Shared utilities
 │   ├── effect-*.tsx        # Effect examples
 │   └── ref-*.tsx          # Ref examples
 ├── hooks/                  # Custom hooks
 │   ├── useOptionKey.ts     # Option key detection
+│   ├── useStateTransition.ts # Effect transition tracking
 │   └── useVisualScope.ts   # Scope management
 ├── lib/                    # Library code
 │   ├── example-types.ts    # Type definitions
 │   └── examples-manifest.ts # Example registry
+├── shared/                 # Shared utilities
+│   ├── appItems.ts
+│   └── idUtils.ts
 ├── sounds/
 │   └── TaskSounds.ts       # Synthesized sound system
+├── theme.ts                # Theme tokens
 ├── VisualEffect.ts         # Core effect visualization
 ├── VisualRef.ts           # Ref visualization
 ├── VisualScope.ts         # Scope visualization
-└── AppContent.tsx         # Main app component
+└── VisualEffect.test.ts    # Unit tests
 ```
 
 ## Design Decisions
@@ -215,11 +220,10 @@ Strict TypeScript configuration catches errors at compile time, including:
 
 ### 6. Audio Experience
 Sounds are designed to enhance understanding without being intrusive:
-- Single tones instead of complex melodies
-- Musical coherence through pentatonic scale
-- Automatic sound on state transitions
-- User-friendly mute control
-- No volume slider - respects system volume
+- Short, focused cues map directly to running, completion, failure, interruption, and reset events
+- A centralized sound module keeps the palette cohesive and manages initialization/muting
+- Automatic sound on state transitions with respectful default levels
+- User-friendly mute control without in-app volume sliders (defers to system volume)
 
 ## Common Operations
 
@@ -240,11 +244,11 @@ Sounds are designed to enhance understanding without being intrusive:
 
 ### Modifying Animations
 
-Look in `EffectNode.tsx` and `motionConfig.ts` for animation configurations:
-- Spring settings in `defaultSpring` configuration
+Look in `EffectNode.tsx` and `animations.ts` for animation configurations:
+- Spring settings including `defaultSpring` for MotionConfig
 - Color transitions in state change logic
 - Timing constants in individual components
-- Animation tokens in `animationTokens.ts`
+- All animation tokens centralized in `animations.ts`
 
 ## Best Practices
 
@@ -253,7 +257,7 @@ Look in `EffectNode.tsx` and `motionConfig.ts` for animation configurations:
 3. **Keep effects pure** - Side effects only for visualization
 4. **Test on mobile** - Ensure responsive behavior works
 5. **Follow the pattern** - Consistency makes the codebase maintainable
-6. **Use proper accessibility** - Keyboard navigation and ARIA labels
+6. **Use proper accessibility** - Provide ARIA labels, focus states, and keyboard-friendly controls
 7. **Optimize bundle size** - Lazy load examples and use code splitting
 
 ## Copy Style Guide
@@ -303,7 +307,6 @@ Migrated from Vite to Next.js 15 for:
 
 ### 2. Component Architecture
 Organized components by domain:
-- `content/` - Content display components
 - `display/` - Main display logic
 - `effect/` - Effect visualization specifics
 - `feedback/` - User feedback components
@@ -311,12 +314,13 @@ Organized components by domain:
 - `renderers/` - Result rendering system
 - `scope/` - Scope and finalizer visualization
 - `ui/` - Reusable UI components
+- Top-level helpers (`CodeBlock`, `HeaderView`, `Timer`, `ScheduleTimeline`) live alongside these folders
 
 ### 3. New Visualization Types
 Expanded beyond basic effects to include:
 - **Ref visualization** with `VisualRef` class
 - **Scope visualization** with finalizer tracking
-- **Enhanced keyboard navigation** with focus management
+- **Quick-open modal** and link-copy affordances for faster exploration
 - **Lazy loading** for better performance
 
 ### 4. Enhanced Developer Experience

@@ -1,11 +1,11 @@
 import { motion } from "motion/react"
 import { theme } from "../../theme"
-import type { AnimationValues } from "./useEffectAnimations"
+import type { EffectMotionValues } from "./useEffectMotion"
 
 interface EffectOverlayProps {
   isRunning: boolean
-  animations: Pick<
-    AnimationValues,
+  motionValues: Pick<
+    EffectMotionValues,
     "borderRadius" | "borderOpacity" | "flashOpacity" | "flashColor"
   >
 }
@@ -42,7 +42,7 @@ function RunningOverlay() {
   )
 }
 
-export function EffectOverlay({ animations, isRunning }: EffectOverlayProps) {
+export function EffectOverlay({ motionValues, isRunning }: EffectOverlayProps) {
   return (
     <>
       {/* Animated border overlay for running state */}
@@ -51,9 +51,9 @@ export function EffectOverlay({ animations, isRunning }: EffectOverlayProps) {
           style={{
             position: "absolute",
             inset: 0,
-            borderRadius: animations.borderRadius,
+            borderRadius: motionValues.borderRadius,
             boxShadow: "inset 0 0 0 1px rgba(100, 200, 255, 0.8)",
-            opacity: animations.borderOpacity,
+            opacity: motionValues.borderOpacity,
             pointerEvents: "none",
           }}
         />
@@ -68,9 +68,9 @@ export function EffectOverlay({ animations, isRunning }: EffectOverlayProps) {
           position: "absolute",
           inset: 0,
           borderRadius: theme.radius.md,
-          background: animations.flashColor,
+          background: motionValues.flashColor,
           mixBlendMode: "overlay",
-          opacity: animations.flashOpacity,
+          opacity: motionValues.flashOpacity,
           pointerEvents: "none",
         }}
       />

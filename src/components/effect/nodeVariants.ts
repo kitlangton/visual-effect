@@ -1,4 +1,4 @@
-import { animationTokens } from "../../animationTokens"
+import { springs } from "@/animations"
 import { TASK_COLORS } from "../../constants/colors"
 
 // Hybrid approach: Only handle static state-based properties in variants
@@ -12,8 +12,8 @@ export const nodeVariants = {
       // Fast color change to match original
       backgroundColor: { duration: 0.1, ease: "easeInOut" },
       // Keep spring for scale/opacity
-      scale: animationTokens.springs.default,
-      opacity: animationTokens.springs.default,
+      scale: springs.default,
+      opacity: springs.default,
     },
   },
 
@@ -23,8 +23,8 @@ export const nodeVariants = {
     backgroundColor: TASK_COLORS.running,
     transition: {
       backgroundColor: { duration: 0.1, ease: "easeInOut" },
-      scale: animationTokens.springs.default,
-      opacity: animationTokens.springs.default,
+      scale: springs.default,
+      opacity: springs.default,
     },
   },
 
@@ -34,8 +34,8 @@ export const nodeVariants = {
     backgroundColor: TASK_COLORS.success,
     transition: {
       backgroundColor: { duration: 0.1, ease: "easeInOut" },
-      scale: animationTokens.springs.contentScale,
-      opacity: animationTokens.springs.contentScale,
+      scale: springs.contentScale,
+      opacity: springs.contentScale,
     },
   },
 
@@ -45,8 +45,8 @@ export const nodeVariants = {
     opacity: 1,
     transition: {
       backgroundColor: { duration: 0.1, ease: "easeInOut" },
-      scale: animationTokens.springs.contentScale,
-      opacity: animationTokens.springs.contentScale,
+      scale: springs.contentScale,
+      opacity: springs.contentScale,
     },
   },
 
@@ -56,8 +56,8 @@ export const nodeVariants = {
     opacity: 1,
     transition: {
       backgroundColor: { duration: 0.1, ease: "easeInOut" },
-      scale: animationTokens.springs.contentScale,
-      opacity: animationTokens.springs.contentScale,
+      scale: springs.contentScale,
+      opacity: springs.contentScale,
     },
   },
 
@@ -67,8 +67,8 @@ export const nodeVariants = {
     scale: 1,
     transition: {
       backgroundColor: { duration: 0.1, ease: "easeInOut" },
-      scale: animationTokens.springs.default,
-      opacity: animationTokens.springs.default,
+      scale: springs.default,
+      opacity: springs.default,
     },
   },
 } as const

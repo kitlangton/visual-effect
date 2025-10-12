@@ -78,7 +78,7 @@ import { NavigationSidebar } from "@/components/layout/NavigationSidebar"
 import { PageHeader } from "@/components/layout/PageHeader"
 import { QuickOpen } from "@/components/ui"
 import type { AppItem } from "@/lib/example-types"
-import { defaultSpring } from "@/motionConfig"
+import { defaultSpring } from "@/animations"
 import { appItems, createExampleId } from "@/shared/appItems"
 import { taskSounds } from "@/sounds/TaskSounds"
 
@@ -119,9 +119,10 @@ function AppContentInner() {
     [],
   )
 
-  const exampleIdSet = useMemo(() => new Set(exampleDisplayItems.map(example => example.id)), [
-    exampleDisplayItems,
-  ])
+  const exampleIdSet = useMemo(
+    () => new Set(exampleDisplayItems.map(example => example.id)),
+    [exampleDisplayItems],
+  )
 
   const pathname = usePathname()
 
@@ -213,7 +214,10 @@ function AppContentInner() {
                         </h2>
                       </div>
                     )}
-                    <div className="w-full relative" id={createExampleId(item.metadata.name, item.metadata.variant)}>
+                    <div
+                      className="w-full relative"
+                      id={createExampleId(item.metadata.name, item.metadata.variant)}
+                    >
                       {(() => {
                         const Component = exampleComponentById[item.metadata.id]
                         if (!Component) return null

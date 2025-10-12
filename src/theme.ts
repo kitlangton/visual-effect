@@ -17,12 +17,4 @@ export const theme = {
   shadow: {
     sm: "0 2px 4px rgba(0,0,0,0.4)",
   },
-
-  animation: {
-    bouncy: {
-      type: "spring" as const,
-      bounce: 0.3,
-      visualDuration: 0.5,
-    },
-  },
 }

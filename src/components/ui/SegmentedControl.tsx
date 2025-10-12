@@ -47,7 +47,6 @@ export function SegmentedControl<T extends string | number>({
     }
   }, [value, options])
 
-
   // Set button ref
   const setButtonRef = (option: T) => (el: HTMLButtonElement | null) => {
     if (el) {

@@ -1,6 +1,8 @@
 import { AnimatePresence, motion } from "motion/react"
 import { memo, useCallback, useState } from "react"
-import { DeathBubble, FailureBubble, NotificationBubble } from "@/components/feedback"
+import { DeathBubble } from "../feedback/DeathBubble"
+import { FailureBubble } from "../feedback/FailureBubble"
+import { NotificationBubble } from "../feedback/NotificationBubble"
 import {
   useVisualEffectNotification,
   useVisualEffectState,
@@ -12,10 +14,10 @@ import { EffectLabel } from "./EffectLabel"
 import { EffectOverlay } from "./EffectOverlay"
 import {
   useEffectAnimations,
+  useEffectMotion,
   useRunningAnimation,
   useStateAnimations,
-  useTaskAnimations,
-} from "./useEffectAnimations"
+} from "./useEffectMotion"
 
 function EffectNodeComponent<A, E>({
   style = {},
@@ -28,7 +30,7 @@ function EffectNodeComponent<A, E>({
 }) {
   const notification = useVisualEffectNotification(effect)
   const state = useVisualEffectState(effect)
-  const animations = useTaskAnimations()
+  const effectMotion = useEffectMotion()
   const isRunning = state.type === "running"
   const isFailedOrDeath = state.type === "failed" || state.type === "death"
 
@@ -37,9 +39,9 @@ function EffectNodeComponent<A, E>({
   const [isHovering, setIsHovering] = useState(false)
 
   // Apply all animations
-  useRunningAnimation(isRunning, animations)
-  useStateAnimations(state, animations)
-  useEffectAnimations(state, animations, isHovering, setShowErrorBubble)
+  useRunningAnimation(isRunning, effectMotion)
+  useStateAnimations(state, effectMotion)
+  useEffectAnimations(state, effectMotion, isHovering, setShowErrorBubble)
 
   // Stable mouse handlers to avoid creating new functions on every render
   const handleMouseEnter = useCallback(() => {
@@ -73,7 +75,7 @@ function EffectNodeComponent<A, E>({
 
       <motion.div
         style={{
-          width: animations.nodeWidth,
+          width: effectMotion.nodeWidth,
           height: 64,
           display: "flex",
           alignItems: "center",
@@ -83,12 +85,12 @@ function EffectNodeComponent<A, E>({
       >
         <EffectContainer
           state={state}
-          animations={animations}
+          motionValues={effectMotion}
           onMouseEnter={handleMouseEnter}
           onMouseLeave={handleMouseLeave}
         >
-          <EffectOverlay isRunning={isRunning} animations={animations} />
-          <EffectContent state={state} animations={animations} />
+          <EffectOverlay isRunning={isRunning} motionValues={effectMotion} />
+          <EffectContent state={state} motionValues={effectMotion} />
         </EffectContainer>
       </motion.div>
       <EffectLabel effect={labelEffect ?? effect} />

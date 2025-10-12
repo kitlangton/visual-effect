@@ -1,6 +1,6 @@
 import { AnimatePresence, motion } from "motion/react"
 import { useEffect, useRef, useState } from "react"
-import { animationTokens } from "../../animationTokens"
+import { springs } from "@/animations"
 import type { Finalizer } from "../../VisualScope"
 
 interface FinalizerCardProps {
@@ -63,7 +63,7 @@ export function FinalizerCard({ finalizer }: FinalizerCardProps) {
       <motion.div
         initial={{ scale: 0.8, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
-        transition={animationTokens.springs.default}
+        transition={springs.default}
         className={`relative w-6 h-6 rounded border flex items-center justify-center transition-colors duration-200 ${
           isCompleted
             ? "bg-green-500 border-green-500"

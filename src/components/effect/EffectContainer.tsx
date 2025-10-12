@@ -1,14 +1,14 @@
 import { motion, useTransform } from "motion/react"
-import { animationTokens } from "../../animationTokens"
+import { colors, effects } from "@/animations"
 import type { VisualEffect } from "../../VisualEffect"
 import { nodeVariants } from "./nodeVariants"
 import { getTaskShadow } from "./taskUtils"
-import type { AnimationValues } from "./useEffectAnimations"
+import type { EffectMotionValues } from "./useEffectMotion"
 
 interface EffectContainerProps {
   state: VisualEffect<unknown, unknown>["state"]
-  animations: Pick<
-    AnimationValues,
+  motionValues: Pick<
+    EffectMotionValues,
     | "nodeWidth"
     | "nodeHeight"
     | "borderRadius"
@@ -24,7 +24,7 @@ interface EffectContainerProps {
 }
 
 export function EffectContainer({
-  animations,
+  motionValues,
   children,
   onMouseEnter,
   onMouseLeave,
@@ -41,46 +41,44 @@ export function EffectContainer({
       animate={current}
       initial={false}
       style={{
-        // Keep imperative animations for complex/dynamic properties
-        width: animations.nodeWidth,
-        height: animations.nodeHeight,
-        borderRadius: animations.borderRadius,
+        // Imperative motion values drive dynamic sizing
+        width: motionValues.nodeWidth,
+        height: motionValues.nodeHeight,
+        borderRadius: motionValues.borderRadius,
         position: "absolute",
         overflow: "hidden",
-        // Let variants handle these: scale, opacity, backgroundColor
-        rotate: animations.rotation,
-        x: animations.shakeX,
-        y: animations.shakeY,
+        // Variants still own scale, opacity, background color
+        rotate: motionValues.rotation,
+        x: motionValues.shakeX,
+        y: motionValues.shakeY,
         cursor: "auto",
-        border: isDeath
-          ? `2px solid ${animationTokens.colors.border.death}`
-          : `1px solid ${animationTokens.colors.border.default}`,
+        border: isDeath ? `2px solid ${colors.border.death}` : `1px solid ${colors.border.default}`,
         // Promote to its own GPU layer and limit reflows/paints
         contain: "layout style paint", // restrict the scope of layout and paint work
         willChange: "transform, filter",
         transform: "translateZ(0)", // ensure GPU compositing
 
-        filter: useTransform([animations.blurAmount], ([blur = 0]: Array<number>) => {
+        filter: useTransform([motionValues.blurAmount], ([blur = 0]: Array<number>) => {
           // Cap blur radius to 2px max for better performance
           const cappedBlur = Math.min(blur, 2)
 
           return isDeath
-            ? `blur(${cappedBlur}px) contrast(${animationTokens.effects.death.contrast}) brightness(${animationTokens.effects.death.brightness})`
+            ? `blur(${cappedBlur}px) contrast(${effects.death.contrast}) brightness(${effects.death.brightness})`
             : `blur(${cappedBlur}px)`
         }),
         // Use box-shadow for glow instead of expensive drop-shadow
-        boxShadow: useTransform([animations.glowIntensity], ([glow = 0]: Array<number>) => {
+        boxShadow: useTransform([motionValues.glowIntensity], ([glow = 0]: Array<number>) => {
           const cappedGlow = Math.min(glow, 8)
           const baseGlow = getTaskShadow(state)
 
           if (isDeath) {
             return cappedGlow > 0
-              ? `${baseGlow}, 0 0 ${cappedGlow * 2}px ${animationTokens.colors.glow.death}`
+              ? `${baseGlow}, 0 0 ${cappedGlow * 2}px ${colors.glow.death}`
               : baseGlow
           }
 
           return cappedGlow > 0
-            ? `${baseGlow}, 0 0 ${cappedGlow}px ${animationTokens.colors.glow.running}`
+            ? `${baseGlow}, 0 0 ${cappedGlow}px ${colors.glow.running}`
             : baseGlow
         }),
       }}

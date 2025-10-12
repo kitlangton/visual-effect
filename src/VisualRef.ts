@@ -20,11 +20,13 @@ export class VisualRef<A> {
 
   get ref(): Effect.Effect<Ref.Ref<A>, never> {
     if (this._ref) return Effect.succeed(this._ref)
-    
+
     return Ref.make(this.initialValue).pipe(
-      Effect.tap(ref => Effect.sync(() => {
-        this._ref = ref
-      }))
+      Effect.tap(ref =>
+        Effect.sync(() => {
+          this._ref = ref
+        }),
+      ),
     )
   }
 
@@ -38,40 +40,38 @@ export class VisualRef<A> {
 
   updateValue(newValue: A): void {
     if (this._currentValue === newValue) return
-    
+
     // Play sound
     taskSounds.playRefUpdate().catch(() => {})
-    
+
     // Update state
     this._currentValue = newValue
     this._justChanged = true
-    
+
     // Clear existing timeout
     if (this.animationTimeoutId) {
       clearTimeout(this.animationTimeoutId)
     }
-    
+
     // Schedule animation cleanup
     this.animationTimeoutId = setTimeout(() => {
       this._justChanged = false
       this.notify()
       this.animationTimeoutId = null
     }, 50)
-    
+
     this.notify()
   }
 
   updateAndGet(updateFn: (current: A) => A): Effect.Effect<A> {
     return this.ref.pipe(
       Effect.flatMap(ref => Ref.updateAndGet(ref, updateFn)),
-      Effect.tap(newValue => Effect.sync(() => this.updateValue(newValue)))
+      Effect.tap(newValue => Effect.sync(() => this.updateValue(newValue))),
     )
   }
 
   get(): Effect.Effect<A> {
-    return this.ref.pipe(
-      Effect.flatMap(Ref.get)
-    )
+    return this.ref.pipe(Effect.flatMap(Ref.get))
   }
 
   subscribe(listener: () => void) {
@@ -91,12 +91,12 @@ export class VisualRef<A> {
       clearTimeout(this.animationTimeoutId)
       this.animationTimeoutId = null
     }
-    
+
     // Reset state
     this._currentValue = this.initialValue
     this._justChanged = false
     this._ref = null
-    
+
     this.notify()
   }
 }
@@ -104,10 +104,7 @@ export class VisualRef<A> {
 export const visualRef = <A>(name: string, initialValue: A) => new VisualRef(name, initialValue)
 
 export function useVisualRef<A>(ref: VisualRef<A>) {
-  const subscribe = useMemo(
-    () => (listener: () => void) => ref.subscribe(listener), 
-    [ref]
-  )
+  const subscribe = useMemo(() => (listener: () => void) => ref.subscribe(listener), [ref])
 
   const getSnapshot = useMemo(() => {
     // Cache to avoid creating new objects on every read
@@ -119,20 +116,20 @@ export function useVisualRef<A>(ref: VisualRef<A>) {
     return () => {
       const currentValue = ref.value
       const currentFlag = ref.justChanged
-      
+
       if (cache.value !== currentValue || cache.justChanged !== currentFlag) {
         cache = { value: currentValue, justChanged: currentFlag }
       }
-      
+
       return cache
     }
   }, [ref])
 
   const snapshot = useSyncExternalStore(subscribe, getSnapshot)
-  
+
   return {
     ref,
     value: snapshot.value,
-    justChanged: snapshot.justChanged
+    justChanged: snapshot.justChanged,
   } as const
 }
