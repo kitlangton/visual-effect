@@ -12,8 +12,8 @@ export type EffectState<A, E> =
   | { type: "interrupted" }
   | { type: "death"; error: unknown }
 
-// Pattern matching helper for EffectState
-export const matchEffectState = <A, E, T>(
+// Pattern matching helper for EffectState (internal use only)
+const matchEffectState = <A, E, T>(
   state: EffectState<A, E>,
   cases: {
     idle: () => T
