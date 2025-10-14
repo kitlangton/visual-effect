@@ -52,7 +52,9 @@ const HeaderViewComponent = forwardRef<HeaderViewRef, HeaderViewProps<unknown, u
     const resetWithDependencies = useCallback(() => {
       task.reset()
       // Also reset refs passed in
-      refs.forEach(r => r.reset())
+      refs.forEach(refItem => {
+        refItem.reset()
+      })
       // Play reset sound
       taskSounds.playReset()
     }, [task, refs])

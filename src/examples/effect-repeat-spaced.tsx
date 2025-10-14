@@ -43,11 +43,12 @@ function checkNotifications(): Effect.Effect<StringResult, string, never> {
       yield* Effect.fail("☠️ Phone Died!")
     }
 
-    const notification = notifications[notificationCount.current]
+    const notificationIndex = notificationCount.current
+    const notification = notifications[notificationIndex] ?? "📴 No Signal"
     notificationCount.increment()
     yield* Effect.sleep(500)
 
-    return new StringResult(notification!)
+    return new StringResult(notification)
   })
 }
 

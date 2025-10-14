@@ -231,11 +231,15 @@ export class VisualEffect<A, E = never> {
   }
 
   private notifyStateListeners() {
-    this.listeners.forEach(l => l())
+    this.listeners.forEach(listener => {
+      listener()
+    })
   }
 
   private notifyNotificationListeners() {
-    this.notificationListeners.forEach(l => l())
+    this.notificationListeners.forEach(listener => {
+      listener()
+    })
   }
 
   private setState(newState: EffectState<A, E>) {
@@ -289,7 +293,9 @@ export class VisualEffect<A, E = never> {
     this.isResetting = true
     try {
       // Reset all children first so their state transitions obey the reset flag
-      this.children.forEach(child => child.reset())
+      this.children.forEach(child => {
+        child.reset()
+      })
 
       // Clear the children collection since they're no longer relevant
       this.children.clear()

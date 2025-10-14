@@ -1,5 +1,6 @@
 import { AnimatePresence, motion } from "motion/react"
-import type { Language } from "prism-react-renderer"
+import type { MotionStyle } from "motion/react"
+import type { Language, RenderProps, Token } from "prism-react-renderer"
 import { Highlight, themes } from "prism-react-renderer"
 import type React from "react"
 import { useEffect, useMemo, useRef } from "react"
@@ -97,77 +98,92 @@ export const CodeBlock: React.FC<CodeBlockProps> = ({
       style={{ overflow: "hidden" }}
     >
       <Highlight theme={oneDark} code={code.trim()} language={language}>
-        {({ className, getLineProps, getTokenProps, style: defaultStyle, tokens }: any) => (
-          <pre
-            className={className}
-            style={{
-              ...defaultStyle,
-              margin: 0,
-              borderRadius: 0,
-              padding: 0,
-              fontFamily: "Consolas, Monaco, 'Courier New', monospace",
-              lineHeight: 1.6,
-              backgroundColor: "transparent",
-              whiteSpace: "pre-wrap",
-              wordBreak: "break-word",
-              wordWrap: "break-word",
-              maxWidth: "100%",
-              width: "100%",
-              ...style,
-            }}
-          >
-            <AnimatePresence mode="popLayout" initial={false}>
-              {tokens.map((line: any, i: number) => {
-                const lineNo = i + 1
-                const isActive = active.includes(lineNo)
-                const lineContent = currentLines[i]
-                // const isNewLine = lineStates.new.has(lineContent);
-                const isNewLine = lineStates.new.has(lineContent)
+        {(highlightProps: RenderProps) => {
+          const {
+            className,
+            getLineProps,
+            getTokenProps,
+            style: defaultStyle,
+            tokens,
+          } = highlightProps
 
-                const { key: _, ...lineProps } = getLineProps({
-                  line,
-                  key: i,
-                  style: {
+          return (
+            <pre
+              className={className}
+              style={{
+                ...defaultStyle,
+                margin: 0,
+                borderRadius: 0,
+                padding: 0,
+                fontFamily: "Consolas, Monaco, 'Courier New', monospace",
+                lineHeight: 1.6,
+                backgroundColor: "transparent",
+                whiteSpace: "pre-wrap",
+                wordBreak: "break-word",
+                wordWrap: "break-word",
+                maxWidth: "100%",
+                width: "100%",
+                ...style,
+              }}
+            >
+              <AnimatePresence mode="popLayout" initial={false}>
+                {tokens.map((lineTokens: Token[], lineIndex: number) => {
+                  const lineNo = lineIndex + 1
+                  const isActive = active.includes(lineNo)
+                  const lineContent = currentLines[lineIndex] ?? ""
+                  // const isNewLine = lineStates.new.has(lineContent);
+                  const isNewLine = lineStates.new.has(lineContent)
+
+                  const lineProps = getLineProps({
+                    line: lineTokens,
+                    key: lineIndex,
+                  })
+                  const lineStyle: React.CSSProperties = {
                     display: "block",
                     paddingLeft: 0,
                     overflow: "hidden",
                     ...(isActive ? { background: "rgba(56, 189, 248, 0.15)" } : {}),
-                  },
-                  onMouseEnter: () => onLineHover?.(lineNo),
-                  onMouseLeave: () => onLineHover?.(null),
-                })
+                    ...(lineProps.style ?? {}),
+                  }
+                  const motionStyle = lineStyle as MotionStyle
 
-                return (
-                  <motion.div
-                    key={`${i}-${lineContent}`}
-                    {...lineProps}
-                    data-line-no={lineNo}
-                    initial={isNewLine ? { opacity: 0, filter: "blur(6px)", height: 0 } : false}
-                    animate={{
-                      opacity: 1,
-                      filter: "blur(0px)",
-                      height: "auto",
-                    }}
-                    exit={{ opacity: 0, filter: "blur(6px)", height: 0 }}
-                    transition={{
-                      type: "spring",
-                      visualDuration: 0.1,
-                      bounce: 0,
-                    }}
-                  >
-                    {line.map((token: any, i: number) => {
-                      const { key: tokenKey, ...tokenProps } = getTokenProps({
-                        token,
-                        key: i,
-                      })
-                      return <span key={tokenKey} {...tokenProps} />
-                    })}
-                  </motion.div>
-                )
-              })}
-            </AnimatePresence>
-          </pre>
-        )}
+                  return (
+                    <motion.div
+                      key={`${lineIndex}-${lineContent}`}
+                      className={lineProps.className}
+                      style={motionStyle}
+                      data-line-no={lineNo}
+                      initial={isNewLine ? { opacity: 0, filter: "blur(6px)", height: 0 } : false}
+                      animate={{
+                        opacity: 1,
+                        filter: "blur(0px)",
+                        height: "auto",
+                      }}
+                      exit={{ opacity: 0, filter: "blur(6px)", height: 0 }}
+                      transition={{
+                        type: "spring",
+                        visualDuration: 0.1,
+                        bounce: 0,
+                      }}
+                      onMouseEnter={() => onLineHover?.(lineNo)}
+                      onMouseLeave={() => onLineHover?.(null)}
+                    >
+                      {lineTokens.map((token: Token, tokenIndex: number) => {
+                        const tokenProps = getTokenProps({
+                          token,
+                          key: tokenIndex,
+                        })
+                        // React keys must be passed directly rather than via spread props
+                        const { key: _ignored, ...restTokenProps } = tokenProps
+                        return <span key={`${lineNo}-${tokenIndex}`} {...restTokenProps} />
+                      })}
+                    </motion.div>
+                  )
+                })}
+              </AnimatePresence>
+            </pre>
+          )
+        }}
       </Highlight>
     </motion.div>
   )

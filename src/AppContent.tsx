@@ -129,13 +129,14 @@ function AppContentInner() {
   useEffect(() => {
     if (!pathname) return
     const segments = pathname.split("/").filter(Boolean)
+    const rawTarget = segments.at(-1)
 
-    if (segments.length === 0) {
+    if (!rawTarget) {
       setCurrentExampleId(undefined)
       return
     }
 
-    const targetId = decodeURIComponent(segments[segments.length - 1]!)
+    const targetId = decodeURIComponent(rawTarget)
     if (!exampleIdSet.has(targetId)) return
 
     window.requestAnimationFrame(() => {

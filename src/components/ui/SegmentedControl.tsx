@@ -24,6 +24,8 @@ export function SegmentedControl<T extends string | number>({
   options,
   value,
 }: SegmentedControlProps<T>) {
+  void enableKeyboard
+  void exampleIndex
   const containerRef = useRef<HTMLDivElement>(null)
   const buttonRefs = useRef<Map<T, HTMLButtonElement>>(new Map())
   const [indicatorStyle, setIndicatorStyle] = useState({

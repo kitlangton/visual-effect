@@ -209,7 +209,8 @@ class TaskSoundSystem {
     const rootNoteStr = `${rootNoteName}${this.chordBaseOctave}`
 
     const TRIAD_SEMITONES = [0, 4, 7] as const
-    const semitoneOffset = TRIAD_SEMITONES[this.chordStep % 3]!
+    const triadIndex = this.chordStep % TRIAD_SEMITONES.length
+    const semitoneOffset = TRIAD_SEMITONES[triadIndex] ?? 0
 
     const note = Tone.Frequency(rootNoteStr).transpose(semitoneOffset).toNote()
 

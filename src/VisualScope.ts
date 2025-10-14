@@ -27,7 +27,9 @@ export class VisualScope {
   }
 
   private notify() {
-    this.subscribers.forEach(callback => callback())
+    this.subscribers.forEach(callback => {
+      callback()
+    })
   }
 
   setState(newState: ScopeState) {

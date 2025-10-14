@@ -8,7 +8,9 @@ export interface UseVisualEffectOptions<A, E> {
   create: () => Effect.Effect<A, E>
 }
 
-type VisualEffectDefinition<A, E> = (() => Effect.Effect<A, E>) | UseVisualEffectOptions<A, E>
+type VisualEffectDefinition<A = unknown, E = unknown> =
+  | (() => Effect.Effect<A, E>)
+  | UseVisualEffectOptions<A, E>
 
 type VisualEffectForDefinition<D> = D extends () => Effect.Effect<infer A, infer E>
   ? VisualEffect<A, E>
@@ -25,11 +27,11 @@ export function useVisualEffect<A, E>(
   return useMemo(() => visualEffect(name, create(), showTimer), deps)
 }
 
-export function useVisualEffects<T extends Record<string, VisualEffectDefinition<any, any>>>(
+export function useVisualEffects<T extends Record<string, VisualEffectDefinition>>(
   definitions: T,
   deps: DependencyList = [],
 ): { [K in keyof T]: VisualEffectForDefinition<T[K]> } {
-  const entries = Object.entries(definitions) as Array<[keyof T, VisualEffectDefinition<any, any>]>
+  const entries = Object.entries(definitions) as Array<[keyof T, VisualEffectDefinition]>
 
   const dependencyBag: unknown[] = [...deps]
   for (const [, definition] of entries) {

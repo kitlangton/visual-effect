@@ -17,7 +17,8 @@ function attemptParallelPark(): Effect.Effect<void, string, never> {
     const delay = getDelay(400, 800)
     yield* Effect.sleep(delay)
 
-    const message = attempts[Math.min(parkingAttempt.current, attempts.length - 1)]!
+    const attemptIndex = Math.min(parkingAttempt.current, attempts.length - 1)
+    const message = attempts[attemptIndex] ?? "😬 Try Again!"
 
     parkingAttempt.increment()
 

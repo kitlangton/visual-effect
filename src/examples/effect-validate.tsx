@@ -29,7 +29,8 @@ function generatePassword(): string {
     "monkey123",
     "dragon",
   ]
-  return passwords[Math.floor(Math.random() * passwords.length)]!
+  const index = Math.floor(Math.random() * passwords.length)
+  return passwords[index] ?? "password123"
 }
 
 export function EffectValidateExample({ exampleId, index, metadata }: ExampleComponentProps) {

@@ -7,14 +7,18 @@ let eventListenersAttached = false
 const handleKeyDown = (e: KeyboardEvent) => {
   if (e.altKey && !globalOptionPressed) {
     globalOptionPressed = true
-    subscribers.forEach(callback => callback(true))
+    subscribers.forEach(callback => {
+      callback(true)
+    })
   }
 }
 
 const handleKeyUp = (e: KeyboardEvent) => {
   if (!e.altKey && globalOptionPressed) {
     globalOptionPressed = false
-    subscribers.forEach(callback => callback(false))
+    subscribers.forEach(callback => {
+      callback(false)
+    })
   }
 }
 
