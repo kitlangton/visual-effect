@@ -4,6 +4,7 @@ import { Effect, Schedule } from "effect"
 import { useMemo } from "react"
 import { EffectExample } from "@/components/display"
 import { StringResult } from "@/components/renderers"
+import { useVisualEffect } from "@/hooks/useVisualEffects"
 import type { ExampleComponentProps } from "@/lib/example-types"
 import { visualEffect } from "@/VisualEffect"
 import { createCounter } from "./helpers"
@@ -51,7 +52,7 @@ function checkNotifications(): Effect.Effect<StringResult, string, never> {
 }
 
 export function EffectRepeatSpacedExample({ exampleId, index, metadata }: ExampleComponentProps) {
-  const baseTask = useMemo(() => visualEffect("phone", checkNotifications()), [])
+  const baseTask = useVisualEffect("phone", checkNotifications)
 
   const repeatedTask = useMemo(
     () =>

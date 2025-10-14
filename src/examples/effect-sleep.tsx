@@ -3,28 +3,26 @@
 import { Effect } from "effect"
 import { useMemo } from "react"
 import { EffectExample } from "@/components/display"
+import { useVisualEffect } from "@/hooks/useVisualEffects"
 import type { ExampleComponentProps } from "@/lib/example-types"
-import { notify, visualEffect } from "@/VisualEffect"
+import { notify } from "@/VisualEffect"
 
 export function EffectSleepExample({ exampleId, index, metadata }: ExampleComponentProps) {
-  const sleepTask = useMemo(
+  const sleepTask = useVisualEffect(
+    "sleep",
     () =>
-      visualEffect(
-        "sleep",
-        Effect.gen(function* () {
-          yield* Effect.sleep("1 second")
+      Effect.gen(function* () {
+        yield* Effect.sleep("1 second")
 
-          // Show sleep notification during the main sleep
-          yield* notify("😴", {
-            duration: 2000,
-          })
+        // Show sleep notification during the main sleep
+        yield* notify("😴", {
+          duration: 2000,
+        })
 
-          yield* Effect.sleep("2 seconds")
+        yield* Effect.sleep("2 seconds")
 
-          return "Refreshed!"
-        }),
-      ),
-    [],
+        return "Refreshed!"
+      }),
   )
 
   // Simplified code snippet without visualization implementation details

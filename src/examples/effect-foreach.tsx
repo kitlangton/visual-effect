@@ -4,6 +4,7 @@ import { Effect } from "effect"
 import { useMemo } from "react"
 import { EffectExample } from "@/components/display"
 import { TemperatureArrayResult } from "@/components/renderers/TemperatureResult"
+import { useVisualEffects } from "@/hooks/useVisualEffects"
 import type { ExampleComponentProps } from "@/lib/example-types"
 import { visualEffect } from "@/VisualEffect"
 import { getWeather } from "./helpers"
@@ -12,9 +13,11 @@ const locations = ["New York", "London", "Tokyo"]
 
 export function EffectForEachExample({ exampleId, index, metadata }: ExampleComponentProps) {
   // Create tasks at the top level
-  const newYorkTask = useMemo(() => visualEffect("newYork", getWeather("New York")), [])
-  const londonTask = useMemo(() => visualEffect("london", getWeather("London")), [])
-  const tokyoTask = useMemo(() => visualEffect("tokyo", getWeather("Tokyo")), [])
+  const { newYork: newYorkTask, london: londonTask, tokyo: tokyoTask } = useVisualEffects({
+    newYork: () => getWeather("New York"),
+    london: () => getWeather("London"),
+    tokyo: () => getWeather("Tokyo"),
+  })
 
   const locationTasks = useMemo(
     () => [newYorkTask, londonTask, tokyoTask],

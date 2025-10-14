@@ -5,6 +5,7 @@ import { useMemo } from "react"
 import { EffectExample } from "@/components/display"
 import { EmojiResult, StringResult } from "@/components/renderers"
 import type { ExampleComponentProps } from "@/lib/example-types"
+import { useVisualEffects } from "@/hooks/useVisualEffects"
 import { visualEffect } from "@/VisualEffect"
 import { type VisualRef, visualRef } from "@/VisualRef"
 
@@ -24,28 +25,20 @@ export function EffectRefConcurrentExample({ exampleId, index, metadata }: Examp
   )
 
   // Create 5 individual increment tasks that each increment the ref by 1
-  const incrementTask1 = useMemo(
-    () => visualEffect("increment1", updateAndGetRef),
-    [updateAndGetRef],
-  )
-
-  const incrementTask2 = useMemo(
-    () => visualEffect("increment2", updateAndGetRef),
-    [updateAndGetRef],
-  )
-
-  const incrementTask3 = useMemo(
-    () => visualEffect("increment3", updateAndGetRef),
-    [updateAndGetRef],
-  )
-
-  const incrementTask4 = useMemo(
-    () => visualEffect("increment4", updateAndGetRef),
-    [updateAndGetRef],
-  )
-
-  const incrementTask5 = useMemo(
-    () => visualEffect("increment5", updateAndGetRef),
+  const {
+    increment1: incrementTask1,
+    increment2: incrementTask2,
+    increment3: incrementTask3,
+    increment4: incrementTask4,
+    increment5: incrementTask5,
+  } = useVisualEffects(
+    {
+      increment1: () => updateAndGetRef,
+      increment2: () => updateAndGetRef,
+      increment3: () => updateAndGetRef,
+      increment4: () => updateAndGetRef,
+      increment5: () => updateAndGetRef,
+    },
     [updateAndGetRef],
   )
 

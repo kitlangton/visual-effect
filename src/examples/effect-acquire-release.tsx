@@ -5,8 +5,9 @@ import { useEffect, useMemo, useRef } from "react"
 import { EffectExample } from "@/components/display"
 import { StringResult } from "@/components/renderers"
 import { useVisualScope } from "@/hooks/useVisualScope"
+import { useVisualEffect } from "@/hooks/useVisualEffects"
 import type { ExampleComponentProps } from "@/lib/example-types"
-import { useVisualEffectState, visualEffect } from "@/VisualEffect"
+import { useVisualEffectState } from "@/VisualEffect"
 import { VisualScope } from "@/VisualScope"
 import { getDelay } from "./helpers"
 
@@ -47,84 +48,69 @@ export function EffectAcquireReleaseExample({ exampleId, index, metadata }: Exam
   useVisualScope(scope)
 
   // Individual resource tasks
-  const dbTask = useMemo(
+  const dbTask = useVisualEffect(
+    "database",
     () =>
-      visualEffect(
-        "database",
-        acquireDatabase().pipe(
-          Effect.map(db => new StringResult(db.connection)),
-          Effect.tap(() => scope.addFinalizer("Close database")),
-          Effect.tap(() => Effect.sleep(200)),
-        ),
+      acquireDatabase().pipe(
+        Effect.map(db => new StringResult(db.connection)),
+        Effect.tap(() => scope.addFinalizer("Close database")),
+        Effect.tap(() => Effect.sleep(200)),
       ),
-    [scope],
+    { deps: [scope] },
   )
 
-  const cacheTask = useMemo(
+  const cacheTask = useVisualEffect(
+    "cache",
     () =>
-      visualEffect(
-        "cache",
-        acquireCache().pipe(
-          Effect.map(cache => new StringResult(cache.connection)),
-          Effect.tap(() => scope.addFinalizer("Flush cache")),
-          Effect.tap(() => Effect.sleep(200)),
-        ),
+      acquireCache().pipe(
+        Effect.map(cache => new StringResult(cache.connection)),
+        Effect.tap(() => scope.addFinalizer("Flush cache")),
+        Effect.tap(() => Effect.sleep(200)),
       ),
-    [scope],
+    { deps: [scope] },
   )
 
-  const loggerTask = useMemo(
+  const loggerTask = useVisualEffect(
+    "logger",
     () =>
-      visualEffect(
-        "logger",
-        acquireLogger().pipe(
-          Effect.map(logger => new StringResult(logger.file)),
-          Effect.tap(() => scope.addFinalizer("Close log file")),
-          Effect.tap(() => Effect.sleep(200)),
-        ),
+      acquireLogger().pipe(
+        Effect.map(logger => new StringResult(logger.file)),
+        Effect.tap(() => scope.addFinalizer("Close log file")),
+        Effect.tap(() => Effect.sleep(200)),
       ),
-    [scope],
+    { deps: [scope] },
   )
 
   // Main effect that uses scoped resources
-  const mainTask = useMemo(() => {
-    const scopedEffect = Effect.gen(function* () {
-      // Increment run count
-      runCountRef.current += 1
-      const currentRun = runCountRef.current
+  const mainTask = useVisualEffect<StringResult, string>(
+    "result",
+    () =>
+      Effect.gen(function* () {
+        runCountRef.current += 1
+        const currentRun = runCountRef.current
 
-      // Simulate scope acquisition
-      scope.setState("acquiring")
+        scope.setState("acquiring")
 
-      // Acquire resources in order
-      yield* dbTask.effect
+        yield* dbTask.effect
+        yield* cacheTask.effect
+        yield* loggerTask.effect
 
-      yield* cacheTask.effect
+        scope.setState("active")
 
-      yield* loggerTask.effect
+        yield* Effect.sleep(getDelay(1000, 1500))
 
-      scope.setState("active")
+        const cyclePosition = (currentRun - 1) % 3
 
-      // Do some work with resources
-      yield* Effect.sleep(getDelay(1000, 1500))
-
-      // Cycle through success, failure, and death
-      const cyclePosition = (currentRun - 1) % 3
-
-      if (cyclePosition === 0) {
-        // First run: succeed
-        return new StringResult("Work completed!")
-      } else if (cyclePosition === 1) {
-        // Second run: fail
-        return yield* Effect.fail("Oops.")
-      } else {
-        // Third run: die
-        return yield* Effect.die("BANG!")
-      }
-    })
-
-    return visualEffect("result", scopedEffect)
-  }, [dbTask, cacheTask, loggerTask, scope])
+        if (cyclePosition === 0) {
+          return new StringResult("Work completed!")
+        } else if (cyclePosition === 1) {
+          return yield* Effect.fail("Oops.")
+        } else {
+          return yield* Effect.die("BANG!")
+        }
+      }),
+    { deps: [dbTask, cacheTask, loggerTask, scope] },
+  )
 
   // Handle scope cleanup when main task completes
   useEffect(() => {

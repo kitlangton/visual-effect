@@ -5,6 +5,7 @@ import { AnimatePresence, motion } from "motion/react"
 import { useEffect, useMemo, useRef, useState } from "react"
 import { EffectExample } from "@/components/display"
 import { EmojiResult } from "@/components/renderers"
+import { useVisualEffects } from "@/hooks/useVisualEffects"
 import type { ExampleComponentProps } from "@/lib/example-types"
 import { visualEffect } from "@/VisualEffect"
 import { getDelay } from "./helpers"
@@ -37,115 +38,89 @@ export function EffectValidateExample({ exampleId, index, metadata }: ExampleCom
   const [, setState] = useState(0)
 
   // Individual validation tasks with random errors
-  const length = useMemo(
-    () =>
-      visualEffect(
-        "length",
-        Effect.gen(function* () {
-          yield* Effect.sleep(getDelay(600, 900))
+  const { length, complexity, vibes } = useVisualEffects({
+    length: () =>
+      Effect.gen(function* () {
+        yield* Effect.sleep(getDelay(600, 900))
 
-          const len = password.current.length
+        const len = password.current.length
 
-          // Real length validation - tuned to fail ~50% of passwords
-          if (len < 8) {
-            return yield* Effect.fail("Too Short!")
-          }
-          if (len > 20) {
-            return yield* Effect.fail("Too Long!")
-          }
-          // Add some randomness to make borderline cases sometimes fail
-          if (len === 8 && Math.random() < 0.3) {
-            return yield* Effect.fail("Too Weak!")
-          }
+        if (len < 8) {
+          return yield* Effect.fail("Too Short!")
+        }
+        if (len > 20) {
+          return yield* Effect.fail("Too Long!")
+        }
+        if (len === 8 && Math.random() < 0.3) {
+          return yield* Effect.fail("Too Weak!")
+        }
 
+        return new EmojiResult("👌")
+      }),
+    complexity: () =>
+      Effect.gen(function* () {
+        yield* Effect.sleep(getDelay(400, 600))
+
+        const hasLower = /[a-z]/.test(password.current)
+        const hasUpper = /[A-Z]/.test(password.current)
+        const hasNumbers = /[0-9]/.test(password.current)
+        const hasSpecial = /[^a-zA-Z0-9]/.test(password.current)
+
+        const complexityScore = [hasLower, hasUpper, hasNumbers, hasSpecial].filter(Boolean).length
+
+        if (complexityScore < 2) {
+          return yield* Effect.fail("Too Simple!")
+        }
+
+        if (password.current.toLowerCase() === password.current && !hasNumbers && !hasSpecial) {
+          return yield* Effect.fail("Weak!")
+        }
+
+        if (/^\d+$/.test(password.current)) {
+          return yield* Effect.fail("Only #s!")
+        }
+
+        if (complexityScore === 2 && Math.random() < 0.3) {
+          return yield* Effect.fail("Meh!")
+        }
+
+        return new EmojiResult("👌")
+      }),
+    vibes: () =>
+      Effect.gen(function* () {
+        yield* Effect.sleep(getDelay(350, 550))
+
+        if (Math.random() > 0.4) {
           return new EmojiResult("👌")
-        }),
-      ),
-    [],
-  )
+        }
 
-  const complexity = useMemo(
-    () =>
-      visualEffect(
-        "complexity",
-        Effect.gen(function* () {
-          yield* Effect.sleep(getDelay(400, 600))
+        const currentPassword = password.current
+        const vibeFailures: Record<string, string> = {
+          password123: "Basic!",
+          "12345678": "Boring!",
+          "SuperSecret2024!": "Try Hard!",
+          "p@ssw0rd": "Cringe!",
+          admin: "Sus!",
+          correcthorsebatterystaple: "Too XKCD!",
+          "ThisIsWayTooLongForAnyReasonablePasswordManagerToHandle2024!": "Extra!",
+          abc: "Lazy!",
+          "P@ssw0rd123!": "Obvious!",
+          hunter2: "Meme!",
+          qwerty: "NO, DVORAK!",
+          letmein: "Desperate!",
+          iloveyou: "Cheesy!",
+          monkey123: "Random!",
+          dragon: "Fantasy!",
+        }
 
-          const hasLower = /[a-z]/.test(password.current)
-          const hasUpper = /[A-Z]/.test(password.current)
-          const hasNumbers = /[0-9]/.test(password.current)
-          const hasSpecial = /[^a-zA-Z0-9]/.test(password.current)
+        const vibeError = vibeFailures[currentPassword]
+        if (vibeError) {
+          return yield* Effect.fail(vibeError)
+        }
 
-          const complexity = [hasLower, hasUpper, hasNumbers, hasSpecial].filter(Boolean).length
-
-          // Real complexity validation - tuned to fail ~50% of passwords
-          if (complexity < 2) {
-            return yield* Effect.fail("Too Simple!")
-          }
-
-          // Check for obviously weak patterns
-          if (password.current.toLowerCase() === password.current && !hasNumbers && !hasSpecial) {
-            return yield* Effect.fail("Weak!")
-          }
-
-          if (/^\d+$/.test(password.current)) {
-            return yield* Effect.fail("Only #s!")
-          }
-
-          // Sometimes fail even decent passwords to hit ~50% rate
-          if (complexity === 2 && Math.random() < 0.3) {
-            return yield* Effect.fail("Meh!")
-          }
-
-          return new EmojiResult("👌")
-        }),
-      ),
-    [],
-  )
-
-  const vibes = useMemo(
-    () =>
-      visualEffect(
-        "vibes",
-        Effect.gen(function* () {
-          yield* Effect.sleep(getDelay(350, 550))
-
-          // Only fail 40% of the time
-          if (Math.random() > 0.4) {
-            return new EmojiResult("👌")
-          }
-
-          // Special failure message for each specific password
-          const currentPassword = password.current
-          const vibeFailures: Record<string, string> = {
-            password123: "Basic!",
-            "12345678": "Boring!",
-            "SuperSecret2024!": "Try Hard!",
-            "p@ssw0rd": "Cringe!",
-            admin: "Sus!",
-            correcthorsebatterystaple: "Too XKCD!",
-            "ThisIsWayTooLongForAnyReasonablePasswordManagerToHandle2024!": "Extra!",
-            abc: "Lazy!",
-            "P@ssw0rd123!": "Obvious!",
-            hunter2: "Meme!",
-            qwerty: "NO, DVORAK!",
-            letmein: "Desperate!",
-            iloveyou: "Cheesy!",
-            monkey123: "Random!",
-            dragon: "Fantasy!",
-          }
-
-          const vibeError = vibeFailures[currentPassword]
-          if (vibeError) {
-            return yield* Effect.fail(vibeError)
-          }
-
-          // Fallback for any password not in the list
-          return yield* Effect.fail("Off!")
-        }),
-      ),
-    [],
-  )
+        return yield* Effect.fail("Off!")
+      }),
+  })
 
   // Subscribe to task state changes to generate new password and trigger re-render when reset
   useEffect(() => {

@@ -4,17 +4,12 @@ import { Effect } from "effect"
 import { useMemo } from "react"
 import { EffectExample } from "@/components/display"
 import { NumberResult } from "@/components/renderers"
+import { useVisualEffect } from "@/hooks/useVisualEffects"
 import type { ExampleComponentProps } from "@/lib/example-types"
-import { visualEffect } from "@/VisualEffect"
 
 export function EffectSyncExample({ exampleId, index, metadata }: ExampleComponentProps) {
-  const syncTask = useMemo(
-    () =>
-      visualEffect(
-        "random",
-        Effect.sync(() => Math.random()).pipe(Effect.map(value => new NumberResult(value))),
-      ),
-    [],
+  const syncTask = useVisualEffect("random", () =>
+    Effect.sync(() => Math.random()).pipe(Effect.map(value => new NumberResult(value))),
   )
 
   const codeSnippet = `const random = Effect.sync(() => Math.random())`

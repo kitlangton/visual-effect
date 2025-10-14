@@ -4,56 +4,51 @@ import { Effect } from "effect"
 import { useMemo, useRef } from "react"
 import { EffectExample } from "@/components/display"
 import { EmojiResult } from "@/components/renderers"
+import { useVisualEffect } from "@/hooks/useVisualEffects"
 import type { ExampleComponentProps } from "@/lib/example-types"
-import { VisualEffect, visualEffect } from "@/VisualEffect"
+import { VisualEffect } from "@/VisualEffect"
 import { getDelay } from "./helpers"
 
 export function EffectOrElseExample({ exampleId, index, metadata }: ExampleComponentProps) {
   const attemptCountRef = useRef(0)
 
-  const shoot = useMemo(
+  const shoot = useVisualEffect(
+    "shoot",
     () =>
-      visualEffect(
-        "shoot",
-        Effect.gen(function* () {
-          const delay = getDelay(300, 600)
-          yield* Effect.sleep(delay)
+      Effect.gen(function* () {
+        const delay = getDelay(300, 600)
+        yield* Effect.sleep(delay)
 
-          const currentAttempt = attemptCountRef.current
-          attemptCountRef.current++
-          const cyclePosition = currentAttempt % 3
+        const currentAttempt = attemptCountRef.current
+        attemptCountRef.current++
+        const cyclePosition = currentAttempt % 3
 
-          // Cycle: 0 = fail, 1 = succeed, 2 = fail
-          if (cyclePosition === 0 || cyclePosition === 2) {
-            return yield* Effect.fail("Out of Ammo!")
-          } else {
-            return new EmojiResult("🔫")
-          }
-        }),
-      ),
-    [],
+        // Cycle: 0 = fail, 1 = succeed, 2 = fail
+        if (cyclePosition === 0 || cyclePosition === 2) {
+          return yield* Effect.fail("Out of Ammo!")
+        } else {
+          return new EmojiResult("🔫")
+        }
+      }),
   )
 
-  const question = useMemo(
+  const question = useVisualEffect(
+    "question",
     () =>
-      visualEffect(
-        "question",
-        Effect.gen(function* () {
-          const delay = getDelay(400, 700)
-          yield* Effect.sleep(delay)
+      Effect.gen(function* () {
+        const delay = getDelay(400, 700)
+        yield* Effect.sleep(delay)
 
-          const currentAttempt = attemptCountRef.current - 1 // Use -1 because shoot already incremented
-          const cyclePosition = currentAttempt % 3
+        const currentAttempt = attemptCountRef.current - 1 // Use -1 because shoot already incremented
+        const cyclePosition = currentAttempt % 3
 
-          // Fail only on the third attempt of each cycle (position 2)
-          if (cyclePosition === 2) {
-            return yield* Effect.fail("Brain Fart!")
-          } else {
-            return new EmojiResult("💬")
-          }
-        }),
-      ),
-    [attemptCountRef],
+        // Fail only on the third attempt of each cycle (position 2)
+        if (cyclePosition === 2) {
+          return yield* Effect.fail("Brain Fart!")
+        } else {
+          return new EmojiResult("💬")
+        }
+      }),
   )
 
   const orElseTask = useMemo(() => {

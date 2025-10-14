@@ -4,6 +4,7 @@ import { Duration, Effect, Schedule } from "effect"
 import { useMemo } from "react"
 import { EffectExample } from "@/components/display"
 import { EmojiResult, StringResult } from "@/components/renderers"
+import { useVisualEffect } from "@/hooks/useVisualEffects"
 import type { ExampleComponentProps } from "@/lib/example-types"
 import { visualEffect } from "@/VisualEffect"
 import { createCounter } from "./helpers"
@@ -26,7 +27,7 @@ export function EffectRepeatWhileOutputExample({
   index,
   metadata,
 }: ExampleComponentProps) {
-  const baseTask = useMemo(() => visualEffect("hotdog", eatHotdog()), [])
+  const baseTask = useVisualEffect("hotdog", eatHotdog)
 
   const repeatedTask = useMemo(
     () =>

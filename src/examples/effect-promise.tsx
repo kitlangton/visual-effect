@@ -2,13 +2,13 @@
 
 import { useMemo } from "react"
 import { EffectExample } from "@/components/display"
+import { useVisualEffect } from "@/hooks/useVisualEffects"
 import type { ExampleComponentProps } from "@/lib/example-types"
-import { visualEffect } from "@/VisualEffect"
 import { getWeather } from "./helpers"
 
 export function EffectPromiseExample({ exampleId, index, metadata }: ExampleComponentProps) {
   // Simulate a weather API call with built-in jittered delay
-  const promiseTask = useMemo(() => visualEffect("london", getWeather("London")), [])
+  const promiseTask = useVisualEffect("london", () => getWeather("London"))
 
   const codeSnippet = `function readTemperature(location) {
   return Effect.promise(() =>

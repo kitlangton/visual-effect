@@ -4,6 +4,8 @@
 
 Visual Effect is an interactive visualization tool for the Effect library that demonstrates how Effect operations execute over time. Built with Next.js 15 and React 19, it provides animated visual representations of Effect constructors and combinators with synchronized sound effects, making it easier to understand their behavior.
 
+**In this house, we use bun.** All package management and script execution should use `bun` commands, not `npm` or `node`.
+
 ## Core Concepts
 
 ### 1. VisualEffect
@@ -233,7 +235,7 @@ Sounds are designed to enhance understanding without being intrusive:
 2. Use the `getWeather` helper for consistent behavior
 3. Follow the example pattern (memoized effects, code snippet, highlight map)
 4. Add to the examples manifest in `src/lib/examples-manifest.ts`
-5. Generate OG images with `npm run generate-og-images`
+5. Generate OG images with `bun run generate-og-images`
 
 ### Creating Custom Renderers
 

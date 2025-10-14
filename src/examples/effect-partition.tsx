@@ -4,8 +4,9 @@ import { Effect } from "effect"
 import { useMemo } from "react"
 import { EffectExample } from "@/components/display"
 import { EmojiResult } from "@/components/renderers"
+import { useVisualEffects } from "@/hooks/useVisualEffects"
 import type { ExampleComponentProps } from "@/lib/example-types"
-import { VisualEffect, visualEffect } from "@/VisualEffect"
+import { VisualEffect } from "@/VisualEffect"
 
 export function EffectPartitionLickTestExample({
   exampleId,
@@ -28,11 +29,13 @@ export function EffectPartitionLickTestExample({
     })
   }
 
-  const iceCream = useMemo(() => visualEffect("iceCream", performLick()), [])
-  const battery = useMemo(() => visualEffect("battery", performLick()), [])
-  const popsicle = useMemo(() => visualEffect("popsicle", performLick()), [])
-  const toad = useMemo(() => visualEffect("toad", performLick()), [])
-  const lollipop = useMemo(() => visualEffect("lollipop", performLick()), [])
+  const { iceCream, battery, popsicle, toad, lollipop } = useVisualEffects({
+    iceCream: performLick,
+    battery: performLick,
+    popsicle: performLick,
+    toad: performLick,
+    lollipop: performLick,
+  })
 
   const effects = useMemo(
     () => [iceCream, battery, popsicle, toad, lollipop],

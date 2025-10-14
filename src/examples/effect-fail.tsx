@@ -3,11 +3,11 @@
 import { Effect } from "effect"
 import { useMemo } from "react"
 import { EffectExample } from "@/components/display"
+import { useVisualEffect } from "@/hooks/useVisualEffects"
 import type { ExampleComponentProps } from "@/lib/example-types"
-import { visualEffect } from "@/VisualEffect"
 
 export function EffectFailExample({ exampleId, index, metadata }: ExampleComponentProps) {
-  const failTask = useMemo(() => visualEffect("error", Effect.fail(new Error("Kaboom!"))), [])
+  const failTask = useVisualEffect("error", () => Effect.fail(new Error("Kaboom!")))
 
   const codeSnippet = `const error = Effect.fail("Kaboom!")`
 

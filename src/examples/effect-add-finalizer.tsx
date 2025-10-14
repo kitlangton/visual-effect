@@ -6,10 +6,9 @@ import { EffectExample } from "@/components/display"
 import { StringResult } from "@/components/renderers"
 import { SegmentedControl } from "@/components/ui"
 import { useVisualScope } from "@/hooks/useVisualScope"
+import { useVisualEffect } from "@/hooks/useVisualEffects"
 import type { ExampleComponentProps } from "@/lib/example-types"
 import { taskSounds } from "@/sounds/TaskSounds"
-import type { VisualEffect } from "@/VisualEffect"
-import { visualEffect } from "@/VisualEffect"
 import { VisualScope } from "@/VisualScope"
 import { getDelay } from "./helpers"
 
@@ -62,39 +61,34 @@ export function EffectFinalizerExample({ exampleId, index, metadata }: ExampleCo
   useVisualScope(scope)
 
   // Effect task that changes based on outcome
-  const task = useMemo<VisualEffect<StringResult, string>>(() => {
-    const effect = Effect.gen(function* () {
-      // Acquire phase
-      scope.setState("acquiring")
+  const task = useVisualEffect<StringResult, string>(
+    "effect",
+    () =>
+      Effect.gen(function* () {
+        scope.setState("acquiring")
 
-      yield* Effect.sleep(getDelay(300, 400))
+        yield* Effect.sleep(getDelay(300, 400))
 
-      // Register finalizer
-      yield* Effect.sync(() => scope.addFinalizer("🧹 Clean up"))
+        yield* Effect.sync(() => scope.addFinalizer("🧹 Clean up"))
 
-      // Active phase
-      scope.setState("active")
+        scope.setState("active")
 
-      // Simulate some work
-      yield* Effect.sleep(getDelay(600, 900))
+        yield* Effect.sleep(getDelay(600, 900))
 
-      // Produce outcome
-      switch (outcome) {
-        case "succeed":
-          return new StringResult("Done")
-        case "fail":
-          return yield* Effect.fail("💥 Fail")
-        case "die":
-          return yield* Effect.die("☠️ Die")
-        case "interrupt":
-          // Long-running effect to allow manual interruption
-          yield* Effect.sleep(60 * 60 * 1000)
-          return new StringResult("Interrupted") // Won't reach if interrupted
-      }
-    })
-
-    return visualEffect("effect", effect)
-  }, [outcome, scope])
+        switch (outcome) {
+          case "succeed":
+            return new StringResult("Done")
+          case "fail":
+            return yield* Effect.fail("💥 Fail")
+          case "die":
+            return yield* Effect.die("☠️ Die")
+          case "interrupt":
+            yield* Effect.sleep(60 * 60 * 1000)
+            return new StringResult("Interrupted")
+        }
+      }),
+    { deps: [outcome, scope] },
+  )
 
   // Cleanup function to interrupt old task when outcome changes
   useEffect(() => {

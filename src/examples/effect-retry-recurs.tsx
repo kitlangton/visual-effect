@@ -4,6 +4,7 @@ import { Effect, Schedule } from "effect"
 import { useMemo } from "react"
 import { EffectExample } from "@/components/display"
 import { StringResult } from "@/components/renderers"
+import { useVisualEffect } from "@/hooks/useVisualEffects"
 import type { ExampleComponentProps } from "@/lib/example-types"
 import { visualEffect } from "@/VisualEffect"
 import { createCounter } from "./helpers"
@@ -46,7 +47,7 @@ function hitSnooze(): Effect.Effect<StringResult | undefined, string | undefined
 const snoozeSchedule = Schedule.intersect(Schedule.spaced("2 seconds"), Schedule.recurs(4))
 
 export function EffectRetryRecursExample({ exampleId, index, metadata }: ExampleComponentProps) {
-  const baseTask = useMemo(() => visualEffect("wakeUp", hitSnooze()), [])
+  const baseTask = useVisualEffect("wakeUp", hitSnooze)
 
   const repeatedTask = useMemo(
     () =>

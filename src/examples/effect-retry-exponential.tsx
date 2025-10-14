@@ -3,6 +3,7 @@
 import { Effect, Schedule } from "effect"
 import { useMemo } from "react"
 import { EffectExample } from "@/components/display"
+import { useVisualEffect } from "@/hooks/useVisualEffects"
 import type { ExampleComponentProps } from "@/lib/example-types"
 import { visualEffect } from "@/VisualEffect"
 import { createCounter, getDelay } from "./helpers"
@@ -34,7 +35,7 @@ export function EffectRetryExponentialExample({
   index,
   metadata,
 }: ExampleComponentProps) {
-  const baseTask = useMemo(() => visualEffect("park", attemptParallelPark()), [])
+  const baseTask = useVisualEffect("park", attemptParallelPark)
 
   const repeatedTask = useMemo(
     () =>

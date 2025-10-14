@@ -3,16 +3,19 @@
 import { Effect } from "effect"
 import { useMemo } from "react"
 import { EffectExample } from "@/components/display"
+import { useVisualEffects } from "@/hooks/useVisualEffects"
 import type { ExampleComponentProps } from "@/lib/example-types"
-import { VisualEffect, visualEffect } from "@/VisualEffect"
+import { VisualEffect } from "@/VisualEffect"
 import { Emoji, loadEmoji } from "./helpers"
 
 export function EffectRaceAllExample({ exampleId, index, metadata }: ExampleComponentProps) {
   // Create tasks with variable delays to simulate real CDN conditions
-  const dog = useMemo(() => visualEffect("dog", loadEmoji(Emoji.Dog)), [])
-  const cat = useMemo(() => visualEffect("cat", loadEmoji(Emoji.Cat)), [])
-  const rabbit = useMemo(() => visualEffect("rabbit", loadEmoji(Emoji.Rabbit)), [])
-  const mouse = useMemo(() => visualEffect("mouse", loadEmoji(Emoji.Mouse)), [])
+  const { cat, dog, mouse, rabbit } = useVisualEffects({
+    cat: () => loadEmoji(Emoji.Cat),
+    dog: () => loadEmoji(Emoji.Dog),
+    mouse: () => loadEmoji(Emoji.Mouse),
+    rabbit: () => loadEmoji(Emoji.Rabbit),
+  })
 
   // Create race task
   const winner = useMemo(() => {

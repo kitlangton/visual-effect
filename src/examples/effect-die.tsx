@@ -3,14 +3,12 @@
 import { Effect } from "effect"
 import { useMemo } from "react"
 import { EffectExample } from "@/components/display"
+import { useVisualEffect } from "@/hooks/useVisualEffects"
 import type { ExampleComponentProps } from "@/lib/example-types"
-import { useVisualEffectState, visualEffect } from "@/VisualEffect"
+import { useVisualEffectState } from "@/VisualEffect"
 
 export function EffectDieExample({ exampleId, index, metadata }: ExampleComponentProps) {
-  const deathTask = useMemo(
-    () => visualEffect("death", Effect.die(new Error("404: Will to live not found"))),
-    [],
-  )
+  const deathTask = useVisualEffect("death", () => Effect.die(new Error("404: Will to live not found")))
 
   const deathState = useVisualEffectState(deathTask)
 

@@ -4,14 +4,12 @@ import { Effect } from "effect"
 import { useMemo } from "react"
 import { EffectExample } from "@/components/display"
 import { NumberResult } from "@/components/renderers"
+import { useVisualEffect } from "@/hooks/useVisualEffects"
 import type { ExampleComponentProps } from "@/lib/example-types"
-import { visualEffect } from "@/VisualEffect"
 
 export function EffectSucceedExample({ exampleId, index, metadata }: ExampleComponentProps) {
-  const successTask = useMemo(
-    () =>
-      visualEffect("value", Effect.succeed(42).pipe(Effect.map(value => new NumberResult(value)))),
-    [],
+  const successTask = useVisualEffect("value", () =>
+    Effect.succeed(42).pipe(Effect.map(value => new NumberResult(value))),
   )
 
   const codeSnippet = `const value = Effect.succeed(42)`

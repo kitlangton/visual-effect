@@ -5,9 +5,10 @@ import { memo, useCallback, useMemo, useState } from "react"
 import { EffectExample } from "@/components/display"
 import { TemperatureArrayResult } from "@/components/renderers"
 import { SegmentedControl } from "@/components/ui"
+import { useVisualEffects } from "@/hooks/useVisualEffects"
 import type { ExampleComponentProps } from "@/lib/example-types"
 import { taskSounds } from "@/sounds/TaskSounds"
-import { VisualEffect, visualEffect } from "@/VisualEffect"
+import { VisualEffect } from "@/VisualEffect"
 import { getWeather } from "./helpers"
 
 type ConcurrencyMode = "sequential" | "unbounded" | "numbered"
@@ -58,11 +59,12 @@ export function EffectAllExample({ exampleId, index, metadata }: ExampleComponen
 
   // Spring animations for smooth transitions (removed to prevent re-animation)
 
-  // Create tasks with built-in jittered delays
-  const nyc = useMemo(() => visualEffect("nyc", getWeather("New York")), [])
-  const berlin = useMemo(() => visualEffect("berlin", getWeather("Berlin")), [])
-  const tokyo = useMemo(() => visualEffect("tokyo", getWeather("Tokyo")), [])
-  const london = useMemo(() => visualEffect("london", getWeather("London")), [])
+  const { nyc, berlin, tokyo, london } = useVisualEffects({
+    nyc: () => getWeather("New York"),
+    berlin: () => getWeather("Berlin"),
+    tokyo: () => getWeather("Tokyo"),
+    london: () => getWeather("London"),
+  })
 
   // Create composed task with dynamic concurrency
   const allTemps = useMemo(() => {

@@ -4,6 +4,7 @@ import { Effect, Schedule } from "effect"
 import { useMemo, useRef } from "react"
 import { EffectExample } from "@/components/display"
 import { EmojiResult } from "@/components/renderers"
+import { useVisualEffect } from "@/hooks/useVisualEffects"
 import type { ExampleComponentProps } from "@/lib/example-types"
 import { visualEffect } from "@/VisualEffect"
 import { getDelay } from "./helpers"
@@ -11,39 +12,36 @@ import { getDelay } from "./helpers"
 export function EffectRetryExample({ exampleId, index, metadata }: ExampleComponentProps) {
   const retryCountRef = useRef(0)
 
-  const swipeCardTask = useMemo(
+  const swipeCardTask = useVisualEffect(
+    "swipeCard",
     () =>
-      visualEffect(
-        "swipeCard",
-        Effect.gen(function* () {
-          const delay = getDelay(200, 400)
-          yield* Effect.sleep(delay)
+      Effect.gen(function* () {
+        const delay = getDelay(200, 400)
+        yield* Effect.sleep(delay)
 
-          // Determine failure based on current retry count
-          const currentRetryCount = retryCountRef.current
-          const failureThreshold = Math.floor(Math.random() * 4) + 2 // 2-5 failures needed
-          const shouldFail = currentRetryCount < failureThreshold
+        // Determine failure based on current retry count
+        const currentRetryCount = retryCountRef.current
+        const failureThreshold = Math.floor(Math.random() * 4) + 2 // 2-5 failures needed
+        const shouldFail = currentRetryCount < failureThreshold
 
-          if (shouldFail) {
-            retryCountRef.current += 1
-            // Randomly select from different error messages
-            const errors = [
-              "Card Read Error!",
-              "Too Fast!",
-              "Too Slow!",
-              "Overdraft Fee!",
-              "Insufficient Funds!",
-            ]
-            const randomError = errors[Math.floor(Math.random() * errors.length)]
-            return yield* Effect.fail(randomError)
-          }
+        if (shouldFail) {
+          retryCountRef.current += 1
+          // Randomly select from different error messages
+          const errors = [
+            "Card Read Error!",
+            "Too Fast!",
+            "Too Slow!",
+            "Overdraft Fee!",
+            "Insufficient Funds!",
+          ]
+          const randomError = errors[Math.floor(Math.random() * errors.length)]
+          return yield* Effect.fail(randomError)
+        }
 
-          // Success! Reset the counter and return result
-          retryCountRef.current = 0
-          return new EmojiResult("💰")
-        }),
-      ),
-    [retryCountRef],
+        // Success! Reset the counter and return result
+        retryCountRef.current = 0
+        return new EmojiResult("💰")
+      }),
   )
 
   const retryTask = useMemo(() => {

@@ -3,14 +3,17 @@
 import { Effect } from "effect"
 import { useMemo } from "react"
 import { EffectExample } from "@/components/display"
+import { useVisualEffects } from "@/hooks/useVisualEffects"
 import type { ExampleComponentProps } from "@/lib/example-types"
-import { VisualEffect, visualEffect } from "@/VisualEffect"
+import { VisualEffect } from "@/VisualEffect"
 import { Emoji, loadEmoji } from "./helpers"
 
 export function EffectRaceExample({ exampleId, index, metadata }: ExampleComponentProps) {
   // Create tasks with variable delays for realistic racing
-  const tortoise = useMemo(() => visualEffect("tortoise", loadEmoji(Emoji.Tortoise)), [])
-  const achilles = useMemo(() => visualEffect("achilles", loadEmoji(Emoji.Achilles)), [])
+  const { tortoise, achilles } = useVisualEffects({
+    tortoise: () => loadEmoji(Emoji.Tortoise),
+    achilles: () => loadEmoji(Emoji.Achilles),
+  })
 
   // Create race task
   const raceResult = useMemo(() => {

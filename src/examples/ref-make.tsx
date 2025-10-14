@@ -4,6 +4,7 @@ import { Duration, Effect, Ref, Schedule } from "effect"
 import { useMemo } from "react"
 import { EffectExample } from "@/components/display"
 import { EmojiResult, StringResult } from "@/components/renderers"
+import { useVisualEffect } from "@/hooks/useVisualEffects"
 import type { ExampleComponentProps } from "@/lib/example-types"
 import { visualEffect } from "@/VisualEffect"
 import { type VisualRef, visualRef } from "@/VisualRef"
@@ -13,18 +14,16 @@ export function EffectRefExample({ exampleId, index, metadata }: ExampleComponen
   const counterRef = useMemo(() => visualRef("counter", 0), [])
 
   // Create a task that increments the counter
-  const incrementTask = useMemo(
+  const incrementTask = useVisualEffect(
+    "increment",
     () =>
-      visualEffect(
-        "increment",
-        Effect.gen(function* () {
-          yield* Effect.sleep(400)
-          const newValue = yield* counterRef.updateAndGet(n => n + 1)
-          yield* Effect.sleep(150)
-          return new StringResult(`${newValue}`)
-        }),
-      ),
-    [counterRef],
+      Effect.gen(function* () {
+        yield* Effect.sleep(400)
+        const newValue = yield* counterRef.updateAndGet(n => n + 1)
+        yield* Effect.sleep(150)
+        return new StringResult(`${newValue}`)
+      }),
+    { deps: [counterRef] },
   )
 
   // Create a task that repeats the increment 5 times
