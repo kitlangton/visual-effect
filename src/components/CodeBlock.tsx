@@ -1,5 +1,5 @@
-import { AnimatePresence, motion } from "motion/react"
 import type { MotionStyle } from "motion/react"
+import { AnimatePresence, motion } from "motion/react"
 import type { Language, RenderProps, Token } from "prism-react-renderer"
 import { Highlight, themes } from "prism-react-renderer"
 import type React from "react"

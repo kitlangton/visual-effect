@@ -16,13 +16,7 @@ type Outcome = "succeed" | "fail" | "die" | "interrupt"
 
 // Configuration panel component
 const ConfigurationPanel = memo(
-  ({
-    outcome,
-    setOutcome,
-  }: {
-    outcome: Outcome
-    setOutcome: (o: Outcome) => void
-  }) => (
+  ({ outcome, setOutcome }: { outcome: Outcome; setOutcome: (o: Outcome) => void }) => (
     <div className="overflow-hidden relative from-neutral-800/40 to-neutral-800/20 bg-gradient-to-t ">
       <div className="p-4 flex items-center justify-between">
         <div className="flex items-center gap-6">
@@ -163,12 +157,7 @@ export function EffectFinalizerExample({ exampleId, index, metadata }: ExampleCo
       effects={useMemo(() => [task], [task])}
       effectHighlightMap={taskHighlightMap}
       scope={scope}
-      configurationPanel={
-        <ConfigurationPanel
-          outcome={outcome}
-          setOutcome={setOutcome}
-        />
-      }
+      configurationPanel={<ConfigurationPanel outcome={outcome} setOutcome={setOutcome} />}
       isDarkMode={isDarkMode}
       {...(index !== undefined && { index })}
       exampleId={exampleId}
