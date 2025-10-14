@@ -17,13 +17,11 @@ type Outcome = "succeed" | "fail" | "die" | "interrupt"
 // Configuration panel component
 const ConfigurationPanel = memo(
   ({
-    exampleIndex,
     outcome,
     setOutcome,
   }: {
     outcome: Outcome
     setOutcome: (o: Outcome) => void
-    exampleIndex?: number
   }) => (
     <div className="overflow-hidden relative from-neutral-800/40 to-neutral-800/20 bg-gradient-to-t ">
       <div className="p-4 flex items-center justify-between">
@@ -41,8 +39,6 @@ const ConfigurationPanel = memo(
               }}
               options={["succeed", "fail", "die", "interrupt"] as const}
               backgroundClassName="bg-neutral-700/80"
-              enableKeyboard={true}
-              {...(exampleIndex !== undefined && { exampleIndex })}
             />
           </div>
         </div>
@@ -171,7 +167,6 @@ export function EffectFinalizerExample({ exampleId, index, metadata }: ExampleCo
         <ConfigurationPanel
           outcome={outcome}
           setOutcome={setOutcome}
-          {...(index !== undefined && { exampleIndex: index })}
         />
       }
       isDarkMode={isDarkMode}

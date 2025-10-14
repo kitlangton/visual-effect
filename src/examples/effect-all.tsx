@@ -17,13 +17,11 @@ type ConcurrencyMode = "sequential" | "unbounded" | "numbered"
 const ConfigurationPanel = memo(
   ({
     concurrencyMode,
-    exampleIndex,
     resetEffect,
     setConcurrencyMode,
   }: {
     concurrencyMode: ConcurrencyMode
     setConcurrencyMode: (mode: ConcurrencyMode) => void
-    exampleIndex?: number
     resetEffect: () => void
   }) => (
     <div className="overflow-hidden relative from-neutral-800/40 to-neutral-800/20 bg-gradient-to-t ">
@@ -42,8 +40,6 @@ const ConfigurationPanel = memo(
               }}
               options={["sequential", "numbered", "unbounded"] as const}
               backgroundClassName="bg-neutral-700/80"
-              enableKeyboard={true}
-              {...(exampleIndex !== undefined && { exampleIndex })}
             />
           </div>
         </div>
@@ -166,7 +162,6 @@ const result = Effect.all([nyc, berlin, tokyo, london]`
         <ConfigurationPanel
           concurrencyMode={concurrencyMode}
           setConcurrencyMode={setConcurrencyMode}
-          {...(index !== undefined && { exampleIndex: index })}
           resetEffect={resetEffect}
         />
       }

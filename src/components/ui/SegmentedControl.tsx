@@ -9,8 +9,6 @@ interface SegmentedControlProps<T extends string | number> {
   disabled?: boolean
   backgroundClassName?: string
   buttonClassName?: string
-  enableKeyboard?: boolean
-  exampleIndex?: number
 }
 
 export function SegmentedControl<T extends string | number>({
@@ -18,14 +16,10 @@ export function SegmentedControl<T extends string | number>({
   buttonClassName = "",
   className = "",
   disabled = false,
-  enableKeyboard = true,
-  exampleIndex,
   onChange,
   options,
   value,
 }: SegmentedControlProps<T>) {
-  void enableKeyboard
-  void exampleIndex
   const containerRef = useRef<HTMLDivElement>(null)
   const buttonRefs = useRef<Map<T, HTMLButtonElement>>(new Map())
   const [indicatorStyle, setIndicatorStyle] = useState({
