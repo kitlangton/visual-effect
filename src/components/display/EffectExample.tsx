@@ -9,7 +9,6 @@ import type { VisualScope } from "../../VisualScope"
 import { CodeBlock } from "../CodeBlock"
 import { EffectNode } from "../effect"
 import { FloatingHighlight } from "../feedback"
-import type { HeaderViewRef } from "../HeaderView"
 import { HeaderView } from "../HeaderView"
 import { ScopeStack } from "../scope/ScopeStack"
 import { RefDisplay, ScheduleTimeline } from "./"
@@ -57,7 +56,6 @@ function EffectExampleComponent<A, E>({
   const [delayedHoveredEffect, setDelayedHoveredEffect] = useState<string | null>(null)
   const hoverTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const codeContainerRef = useRef<HTMLDivElement>(null)
-  const headerRef = useRef<HeaderViewRef | null>(null)
 
   // Memoize hover handlers to prevent re-creation on every render
   const handleMouseEnter = useCallback((effectName: string) => {
@@ -151,7 +149,6 @@ function EffectExampleComponent<A, E>({
         transition={standardTransition}
       >
         <HeaderView
-          ref={headerRef}
           effect={headerEffect}
           name={name}
           {...(variant && { variant })}
