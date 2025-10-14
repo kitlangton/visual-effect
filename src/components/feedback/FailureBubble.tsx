@@ -2,7 +2,7 @@
 
 import { animate, motion, useMotionValue, useTransform } from "motion/react"
 import { useEffect } from "react"
-import { springs, shake, colors } from "@/animations"
+import { colors, shake, springs } from "@/animations"
 import { dimensions } from "@/constants/dimensions"
 
 interface FailureBubbleProps {

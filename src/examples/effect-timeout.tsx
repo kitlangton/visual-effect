@@ -14,23 +14,19 @@ const failureMessages = ["TOO SLOW!", "SPOILED!", "STARVED TO DEATH!", "IT'S COL
 export function EffectTimeoutExample({ exampleId, index, metadata }: ExampleComponentProps) {
   const attemptRef = useRef(0)
 
-  const pizza = useVisualEffect(
-    "pizza",
-    () =>
-      Effect.gen(function* () {
-        const attempt = attemptRef.current
-        attemptRef.current++
+  const pizza = useVisualEffect("pizza", () =>
+    Effect.gen(function* () {
+      const attempt = attemptRef.current
+      attemptRef.current++
 
-        // First attempt always times out, second attempt succeeds
-        const isFirstAttempt = attempt % 2 === 0
-        const delay = isFirstAttempt
-          ? getDelay(1500, 2000)
-          : getDelay(400, 700)
+      // First attempt always times out, second attempt succeeds
+      const isFirstAttempt = attempt % 2 === 0
+      const delay = isFirstAttempt ? getDelay(1500, 2000) : getDelay(400, 700)
 
-        yield* Effect.sleep(delay)
+      yield* Effect.sleep(delay)
 
-        return new EmojiResult("🍕")
-      }),
+      return new EmojiResult("🍕")
+    }),
   )
 
   const timeoutTask = useMemo(() => {

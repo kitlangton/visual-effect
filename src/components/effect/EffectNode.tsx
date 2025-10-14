@@ -1,13 +1,13 @@
 import { AnimatePresence, motion } from "motion/react"
 import { memo, useCallback, useState } from "react"
-import { DeathBubble } from "../feedback/DeathBubble"
-import { FailureBubble } from "../feedback/FailureBubble"
-import { NotificationBubble } from "../feedback/NotificationBubble"
 import {
   useVisualEffectNotification,
   useVisualEffectState,
   type VisualEffect,
 } from "@/VisualEffect"
+import { DeathBubble } from "../feedback/DeathBubble"
+import { FailureBubble } from "../feedback/FailureBubble"
+import { NotificationBubble } from "../feedback/NotificationBubble"
 import { EffectContainer } from "./EffectContainer"
 import { EffectContent } from "./EffectContent"
 import { EffectLabel } from "./EffectLabel"

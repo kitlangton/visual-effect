@@ -13,7 +13,11 @@ const locations = ["New York", "London", "Tokyo"]
 
 export function EffectForEachExample({ exampleId, index, metadata }: ExampleComponentProps) {
   // Create tasks at the top level
-  const { newYork: newYorkTask, london: londonTask, tokyo: tokyoTask } = useVisualEffects({
+  const {
+    newYork: newYorkTask,
+    london: londonTask,
+    tokyo: tokyoTask,
+  } = useVisualEffects({
     newYork: () => getWeather("New York"),
     london: () => getWeather("London"),
     tokyo: () => getWeather("Tokyo"),

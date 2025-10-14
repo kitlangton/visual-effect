@@ -8,7 +8,9 @@ import type { ExampleComponentProps } from "@/lib/example-types"
 import { useVisualEffectState } from "@/VisualEffect"
 
 export function EffectDieExample({ exampleId, index, metadata }: ExampleComponentProps) {
-  const deathTask = useVisualEffect("death", () => Effect.die(new Error("404: Will to live not found")))
+  const deathTask = useVisualEffect("death", () =>
+    Effect.die(new Error("404: Will to live not found")),
+  )
 
   const deathState = useVisualEffectState(deathTask)
 

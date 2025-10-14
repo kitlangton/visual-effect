@@ -1,6 +1,6 @@
-import { useMemo, type DependencyList } from "react"
 import type { Effect } from "effect"
-import { visualEffect, type VisualEffect } from "@/VisualEffect"
+import { type DependencyList, useMemo } from "react"
+import { type VisualEffect, visualEffect } from "@/VisualEffect"
 
 export interface UseVisualEffectOptions<A, E> {
   showTimer?: boolean
@@ -8,9 +8,7 @@ export interface UseVisualEffectOptions<A, E> {
   create: () => Effect.Effect<A, E>
 }
 
-type VisualEffectDefinition<A, E> =
-  | (() => Effect.Effect<A, E>)
-  | UseVisualEffectOptions<A, E>
+type VisualEffectDefinition<A, E> = (() => Effect.Effect<A, E>) | UseVisualEffectOptions<A, E>
 
 type VisualEffectForDefinition<D> = D extends () => Effect.Effect<infer A, infer E>
   ? VisualEffect<A, E>
@@ -31,9 +29,7 @@ export function useVisualEffects<T extends Record<string, VisualEffectDefinition
   definitions: T,
   deps: DependencyList = [],
 ): { [K in keyof T]: VisualEffectForDefinition<T[K]> } {
-  const entries = Object.entries(definitions) as Array<
-    [keyof T, VisualEffectDefinition<any, any>]
-  >
+  const entries = Object.entries(definitions) as Array<[keyof T, VisualEffectDefinition<any, any>]>
 
   const dependencyBag: unknown[] = [...deps]
   for (const [, definition] of entries) {
@@ -47,16 +43,12 @@ export function useVisualEffects<T extends Record<string, VisualEffectDefinition
 
     for (const [key, definition] of entries) {
       const { create, showTimer = false } =
-        typeof definition === "function"
-          ? { create: definition, showTimer: false }
-          : definition
+        typeof definition === "function" ? { create: definition, showTimer: false } : definition
 
       const effectName = String(key)
-      effects[key] = visualEffect(
-        effectName,
-        create(),
-        showTimer,
-      ) as VisualEffectForDefinition<T[typeof key]>
+      effects[key] = visualEffect(effectName, create(), showTimer) as VisualEffectForDefinition<
+        T[typeof key]
+      >
     }
 
     return effects

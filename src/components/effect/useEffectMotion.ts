@@ -8,7 +8,7 @@ import {
   useVelocity,
 } from "motion/react"
 import { useEffect, useLayoutEffect, useRef, useState } from "react"
-import { springs, timing, colors, shake, effects } from "@/animations"
+import { colors, effects, shake, springs, timing } from "@/animations"
 import { dimensions } from "@/constants/dimensions"
 import { useStateTransition } from "../../hooks/useStateTransition"
 import { theme } from "../../theme"

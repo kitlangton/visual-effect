@@ -9,8 +9,8 @@ import {
   StopIcon,
 } from "@phosphor-icons/react"
 import { MotionConfig } from "motion/react"
-import { Fragment, useCallback, useEffect, useMemo, useState } from "react"
 import { usePathname } from "next/navigation"
+import { Fragment, useCallback, useEffect, useMemo, useState } from "react"
 
 // Examples
 import EffectAcquireRelease from "@/examples/effect-acquire-release"
@@ -73,12 +73,12 @@ const exampleComponentById: Record<string, ExampleComponent> = {
   "ref-update-and-get": RefUpdateAndGet,
 }
 
+import { defaultSpring } from "@/animations"
 import { EffectLogo } from "@/components/feedback"
 import { NavigationSidebar } from "@/components/layout/NavigationSidebar"
 import { PageHeader } from "@/components/layout/PageHeader"
 import { QuickOpen } from "@/components/ui"
 import type { AppItem } from "@/lib/example-types"
-import { defaultSpring } from "@/animations"
 import { appItems, createExampleId } from "@/shared/appItems"
 import { taskSounds } from "@/sounds/TaskSounds"
 
