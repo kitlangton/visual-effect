@@ -41,7 +41,7 @@ function NavigationSidebarComponent({
       className="fixed top-0 w-76 h-screen z-40 hidden xl:block"
       style={{ left: "max(0px, calc(50vw - 40rem))" }}
     >
-      <div className="h-full overflow-y-auto border-r border-neutral-800">
+      <div className="h-full overflow-y-auto border-r border-neutral-800 sidebar-scrollbar">
         <div className="p-6">
           <div className="mb-6">
             <h2 className="text-sm font-mono text-neutral-500 mb-4">EXAMPLES</h2>
