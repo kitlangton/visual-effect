@@ -55,24 +55,6 @@ function EffectNodeComponent<A, E>({
 
   return (
     <div style={{ ...style, position: "relative" }}>
-      {/* Error bubble positioned outside container */}
-      <AnimatePresence>
-        {isFailedOrDeath &&
-          showErrorBubble &&
-          (state.type === "failed" ? (
-            <FailureBubble error={state.error} />
-          ) : (
-            <DeathBubble error={state.error} />
-          ))}
-      </AnimatePresence>
-
-      {/* Notification bubbles - hidden when error bubbles are shown */}
-      <AnimatePresence>
-        {!isFailedOrDeath && notification && (
-          <NotificationBubble key={notification.id} notification={notification} />
-        )}
-      </AnimatePresence>
-
       <motion.div
         style={{
           width: effectMotion.nodeWidth,
@@ -83,6 +65,24 @@ function EffectNodeComponent<A, E>({
           position: "relative",
         }}
       >
+        {/* Error bubble positioned outside container */}
+        <AnimatePresence>
+          {isFailedOrDeath &&
+            showErrorBubble &&
+            (state.type === "failed" ? (
+              <FailureBubble error={state.error} />
+            ) : (
+              <DeathBubble error={state.error} />
+            ))}
+        </AnimatePresence>
+
+        {/* Notification bubbles - hidden when error bubbles are shown */}
+        <AnimatePresence>
+          {!isFailedOrDeath && notification && (
+            <NotificationBubble key={notification.id} notification={notification} />
+          )}
+        </AnimatePresence>
+
         <EffectContainer
           state={state}
           motionValues={effectMotion}

@@ -10,6 +10,7 @@ const nextConfig = {
   experimental: {
     esmExternals: true,
   },
+  turbopack: {},
   webpack: (config, { isServer }) => {
     // Disable module concatenation to fix "Unexpected end of JSON input" errors
     config.optimization.concatenateModules = false

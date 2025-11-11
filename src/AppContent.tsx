@@ -21,6 +21,7 @@ import EffectDie from "@/examples/effect-die"
 import EffectEventually from "@/examples/effect-eventually"
 import EffectFail from "@/examples/effect-fail"
 import EffectForEach from "@/examples/effect-foreach"
+import EffectFork from "@/examples/effect-fork"
 import EffectOrElse from "@/examples/effect-orelse"
 import EffectPartition from "@/examples/effect-partition"
 import EffectPromise from "@/examples/effect-promise"
@@ -55,6 +56,7 @@ const exampleComponentById: Record<string, ExampleComponent> = {
   "effect-eventually": EffectEventually,
   "effect-fail": EffectFail,
   "effect-foreach": EffectForEach,
+  "effect-fork": EffectFork,
   "effect-orelse": EffectOrElse,
   "effect-partition": EffectPartition,
   "effect-promise": EffectPromise,

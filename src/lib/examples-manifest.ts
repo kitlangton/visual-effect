@@ -66,6 +66,12 @@ export const examplesManifest: Array<ExampleMeta> = [
     description: "Execute an effectful operation for each element in an iterable",
     section: "concurrency",
   },
+  {
+    id: "effect-fork",
+    name: "Effect.fork",
+    description: "Run an effect concurrently in a background fiber",
+    section: "concurrency",
+  },
   // {
   //   id: "effect-semaphore",
   //   name: "Effect.Semaphore",

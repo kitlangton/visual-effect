@@ -8,9 +8,11 @@ An interactive Next.js app that visualizes how Effect operations execute over ti
 
 ## Local Development
 
+**Use bun for all commands:**
+
 ```bash
-pnpm install
-pnpm dev
+bun install
+bun dev
 ```
 
 ## License
