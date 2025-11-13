@@ -146,7 +146,7 @@ function AppContentInner() {
   }, [pathname, exampleIdSet, handleExampleSelect])
 
   return (
-    <div className="min-h-screen bg-neutral-950 text-white font-mono relative overflow-hidden">
+    <div className="min-h-screen font-mono relative overflow-hidden">
       {/* Command-K quick-open modal */}
       <QuickOpen items={exampleDisplayItems} onSelect={handleExampleSelect} />
 
