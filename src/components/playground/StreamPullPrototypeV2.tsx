@@ -87,7 +87,7 @@ export function StreamPullPrototypeV2() {
               >
                 {queue.map((value, idx) => (
                   <StackedCard
-                    key={`card-${value}`}
+                    key={`card-${value}-${idx}`}
                     value={value}
                     stackIndex={queue.length - 1 - idx}
                     totalInStack={queue.length}
