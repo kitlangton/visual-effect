@@ -36,13 +36,15 @@ export function StreamPullPrototypeV2() {
     setPulling(true);
     const bottomCard = queue[queue.length - 1];
 
+    // Remove from queue immediately to prevent double-pull
+    setQueue(queue.slice(0, -1));
+
     // First flip the card
     setFlippedCards((prev) => new Set([...prev, bottomCard]));
 
-    // After flip animation, move to consumed
+    // After flip animation, add to consumed
     setTimeout(() => {
       setConsumed((prev) => [...prev, bottomCard]);
-      setQueue(queue.slice(0, -1));
       setPulling(false);
     }, 800); // 600ms flip + 200ms buffer
   };
