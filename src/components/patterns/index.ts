@@ -14,3 +14,7 @@ export { TimelineTicksPattern } from './TimelineTicksPattern';
 export { TimelineDotPattern } from './TimelineDotPattern';
 export { TimelineSegmentPattern } from './TimelineSegmentPattern';
 export { RetryTimelinePattern, InteractiveRetryTimelineDemo } from './RetryTimelinePattern';
+export { CardFaceFront } from './CardFaceFront';
+export { CardFaceBack } from './CardFaceBack';
+export { CardFlip } from './CardFlip';
+export { StackedCard } from './StackedCard';

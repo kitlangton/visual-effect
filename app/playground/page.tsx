@@ -7,6 +7,9 @@ import { StreamPullPrototype } from '../../src/components/playground/StreamPullP
 import { StreamPushPullPrototype } from '../../src/components/playground/StreamPushPullPrototype';
 import {
   BorderPulsePattern,
+  CardFaceBack,
+  CardFaceFront,
+  CardFlip,
   CompletionCheckPattern,
   DeathGlitchPattern,
   FailureShakePattern,
@@ -18,6 +21,7 @@ import {
   LightSweepPattern,
   RunningStatePattern,
   ShapeMorphPattern,
+  StackedCard,
   TimelineDotPattern,
   TimelineSegmentPattern,
   TimelineTicksPattern,
@@ -38,6 +42,13 @@ export default function PlaygroundPage() {
   const [dotCount, setDotCount] = useState(5);
   const [activeIndex, setActiveIndex] = useState(0);
   const [isComplete, setIsComplete] = useState(false);
+
+  // Card component states
+  const [cardFlipped, setCardFlipped] = useState(false);
+  const [card1Flipped, setCard1Flipped] = useState(false);
+  const [card2Flipped, setCard2Flipped] = useState(false);
+  const [card3Flipped, setCard3Flipped] = useState(false);
+  const [fullStackFlipped, setFullStackFlipped] = useState([false, false, false, false, false]);
 
   // EffectNode states
   const [simpleEffect] = useState(() => {
@@ -119,6 +130,199 @@ export default function PlaygroundPage() {
           <h1 className='text-3xl font-bold'>Component Playground</h1>
           <p className='text-neutral-400'>Visual showcase of atomic components in isolation</p>
         </div>
+
+        {/* Card Atomic Components */}
+        <section className='space-y-4 border border-neutral-700 rounded-lg p-6 bg-neutral-800/50'>
+          <h2 className='text-xl font-semibold text-blue-400'>Card Atomic Components</h2>
+          <p className='text-neutral-400 text-sm'>
+            Playing card-style chunk cards with flip animations and stacking
+          </p>
+
+          {/* Individual Card Faces */}
+          <div>
+            <h3 className='text-lg font-semibold text-green-400 mb-3'>Individual Card Faces</h3>
+            <div className='grid grid-cols-2 md:grid-cols-4 gap-6'>
+              <div className='space-y-2 border border-neutral-600 rounded p-4 bg-neutral-900/50'>
+                <div className='text-xs text-neutral-500 uppercase text-center'>
+                  CardFaceFront (42)
+                </div>
+                <div className='flex justify-center items-center h-24'>
+                  <CardFaceFront value={42} />
+                </div>
+              </div>
+              <div className='space-y-2 border border-neutral-600 rounded p-4 bg-neutral-900/50'>
+                <div className='text-xs text-neutral-500 uppercase text-center'>
+                  CardFaceFront (7)
+                </div>
+                <div className='flex justify-center items-center h-24'>
+                  <CardFaceFront value={7} />
+                </div>
+              </div>
+              <div className='space-y-2 border border-neutral-600 rounded p-4 bg-neutral-900/50'>
+                <div className='text-xs text-neutral-500 uppercase text-center'>
+                  CardFaceBack (Locked)
+                </div>
+                <div className='flex justify-center items-center h-24'>
+                  <CardFaceBack />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Interactive Card Flip */}
+          <div>
+            <h3 className='text-lg font-semibold text-cyan-400 mb-3'>Interactive Card Flip</h3>
+            <div className='space-y-4'>
+              <div className='flex justify-center items-center border border-neutral-600 rounded p-8 bg-neutral-900/50'>
+                <CardFlip
+                  isFlipped={cardFlipped}
+                  frontFace={<CardFaceFront value={99} />}
+                  backFace={<CardFaceBack />}
+                />
+              </div>
+              <div className='flex gap-2 justify-center'>
+                <button
+                  type='button'
+                  onClick={() => setCardFlipped(!cardFlipped)}
+                  className='px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded'
+                >
+                  {cardFlipped ? 'Flip to Back' : 'Flip to Front'}
+                </button>
+              </div>
+            </div>
+          </div>
+
+          {/* Mini Stack Demo */}
+          <div>
+            <h3 className='text-lg font-semibold text-purple-400 mb-3'>StackedCard (3 cards)</h3>
+            <div className='space-y-4'>
+              <div
+                className='flex justify-center items-start border border-neutral-600 rounded p-8 bg-neutral-900/50'
+                style={{ minHeight: '200px' }}
+              >
+                <div
+                  className='relative'
+                  style={{ width: '64px', height: '120px' }}
+                >
+                  <StackedCard
+                    value={10}
+                    stackIndex={2}
+                    totalInStack={3}
+                    isFlipped={card3Flipped}
+                  />
+                  <StackedCard
+                    value={20}
+                    stackIndex={1}
+                    totalInStack={3}
+                    isFlipped={card2Flipped}
+                  />
+                  <StackedCard
+                    value={30}
+                    stackIndex={0}
+                    totalInStack={3}
+                    isFlipped={card1Flipped}
+                  />
+                </div>
+              </div>
+              <div className='flex gap-2 justify-center flex-wrap'>
+                <button
+                  type='button'
+                  onClick={() => setCard1Flipped(!card1Flipped)}
+                  className='px-3 py-1 bg-blue-600 hover:bg-blue-700 rounded text-sm'
+                >
+                  Flip Bottom (30)
+                </button>
+                <button
+                  type='button'
+                  onClick={() => setCard2Flipped(!card2Flipped)}
+                  className='px-3 py-1 bg-purple-600 hover:bg-purple-700 rounded text-sm'
+                >
+                  Flip Middle (20)
+                </button>
+                <button
+                  type='button'
+                  onClick={() => setCard3Flipped(!card3Flipped)}
+                  className='px-3 py-1 bg-indigo-600 hover:bg-indigo-700 rounded text-sm'
+                >
+                  Flip Top (10)
+                </button>
+                <button
+                  type='button'
+                  onClick={() => {
+                    setCard1Flipped(false);
+                    setCard2Flipped(false);
+                    setCard3Flipped(false);
+                  }}
+                  className='px-3 py-1 bg-neutral-600 hover:bg-neutral-700 rounded text-sm'
+                >
+                  Reset All
+                </button>
+              </div>
+            </div>
+          </div>
+
+          {/* Full Card Stack */}
+          <div>
+            <h3 className='text-lg font-semibold text-yellow-400 mb-3'>
+              Full Card Stack (5 cards)
+            </h3>
+            <div className='space-y-4'>
+              <div
+                className='flex justify-center items-start border border-neutral-600 rounded p-8 bg-neutral-900/50'
+                style={{ minHeight: '240px' }}
+              >
+                <div
+                  className='relative'
+                  style={{ width: '64px', height: '160px' }}
+                >
+                  {[5, 4, 3, 2, 1].map((value, index) => (
+                    <StackedCard
+                      key={value}
+                      value={value}
+                      stackIndex={4 - index}
+                      totalInStack={5}
+                      isFlipped={fullStackFlipped[4 - index] ?? false}
+                    />
+                  ))}
+                </div>
+              </div>
+              <div className='flex gap-2 justify-center flex-wrap'>
+                <button
+                  type='button'
+                  onClick={() => {
+                    const newFlipped = [...fullStackFlipped];
+                    newFlipped[0] = !newFlipped[0];
+                    setFullStackFlipped(newFlipped);
+                  }}
+                  className='px-3 py-1 bg-blue-600 hover:bg-blue-700 rounded text-sm'
+                >
+                  Flip Bottom
+                </button>
+                <button
+                  type='button'
+                  onClick={() => {
+                    setFullStackFlipped(fullStackFlipped.map((_, i) => i === 0));
+                  }}
+                  className='px-3 py-1 bg-green-600 hover:bg-green-700 rounded text-sm'
+                >
+                  Flip All Sequential
+                </button>
+                <button
+                  type='button'
+                  onClick={() => {
+                    setFullStackFlipped([false, false, false, false, false]);
+                  }}
+                  className='px-3 py-1 bg-neutral-600 hover:bg-neutral-700 rounded text-sm'
+                >
+                  Reset
+                </button>
+              </div>
+              <div className='text-xs text-neutral-400 text-center'>
+                Bottom card (index 0) has pulsing highlight
+              </div>
+            </div>
+          </div>
+        </section>
 
         {/* StreamTimeline Section */}
         <section className='space-y-4 border border-neutral-700 rounded-lg p-6 bg-neutral-800/50'>
