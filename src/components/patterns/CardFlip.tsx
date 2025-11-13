@@ -119,20 +119,21 @@ export function CardFlip({
         >
           {frontFace}
         </motion.div>
-      </motion.div>
 
-      {/* Glow burst on flip completion */}
-      {isFlipped && (
-        <motion.div
-          className='absolute inset-0 rounded-xl pointer-events-none'
-          style={{
-            boxShadow: '0 0 20px rgba(59, 130, 246, 0.6)',
-          }}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: [0, 1, 0] }}
-          transition={{ duration: 0.5, times: [0, 0.5, 1] }}
-        />
-      )}
+        {/* Glow burst on flip completion - inside rotating container */}
+        {isFlipped && (
+          <motion.div
+            className='absolute inset-0 rounded-xl pointer-events-none'
+            style={{
+              boxShadow: '0 0 20px rgba(59, 130, 246, 0.6)',
+              zIndex: 20,
+            }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: [0, 1, 0] }}
+            transition={{ duration: 0.5, times: [0, 0.5, 1] }}
+          />
+        )}
+      </motion.div>
     </div>
   );
 }
