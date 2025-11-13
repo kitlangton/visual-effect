@@ -560,11 +560,11 @@ function StreamPullPrototype() {
 
     setPulling(true);
 
-    // Animate the pull
+    // Animate the pull - pull from bottom (last item)
     setTimeout(() => {
-      const [next, ...rest] = queue;
+      const next = queue[queue.length - 1];
       setConsumed((prev) => [...prev, next]);
-      setQueue(rest);
+      setQueue(queue.slice(0, -1));
       setPulling(false);
     }, 400);
   };
@@ -580,7 +580,7 @@ function StreamPullPrototype() {
   return (
     <div className='space-y-6'>
       {/* Visual Layout */}
-      <div className='flex items-start justify-between gap-8 p-6'>
+      <div className='flex items-start justify-between gap-8 p-6 relative'>
         <ChunkStack
           items={queue}
           pulling={pulling}
@@ -618,14 +618,17 @@ function ChunkStack({ items, pulling }: { items: number[]; pulling: boolean }) {
       <div className='text-sm text-neutral-400 font-mono'>Source Queue</div>
       <div className='flex flex-col gap-3 min-h-[280px]'>
         {items.length > 0 ? (
-          items.map((num, idx) => (
-            <ChunkBadgeItem
-              key={`queue-${num}`}
-              num={num}
-              isTop={idx === 0}
-              pulling={pulling && idx === 0}
-            />
-          ))
+          items.map((num, idx) => {
+            const isBottom = idx === items.length - 1;
+            return (
+              <ChunkBadgeItem
+                key={`queue-${num}`}
+                num={num}
+                isBottom={isBottom}
+                pulling={pulling && isBottom}
+              />
+            );
+          })
         ) : (
           <div className='border-2 border-dashed border-neutral-700 rounded-lg h-16 flex items-center justify-center text-neutral-600 text-sm'>
             Empty
@@ -638,14 +641,14 @@ function ChunkStack({ items, pulling }: { items: number[]; pulling: boolean }) {
 
 function ChunkBadgeItem({
   num,
-  isTop,
+  isBottom,
   pulling,
-}: { num: number; isTop: boolean; pulling: boolean }) {
+}: { num: number; isBottom: boolean; pulling: boolean }) {
   return (
     <motion.div
       initial={{ opacity: 0, scale: 0.8 }}
       animate={{
-        opacity: isTop ? 1 : 0.5,
+        opacity: isBottom ? 1 : 0.5,
         scale: 1,
         x: pulling ? 20 : 0,
       }}
@@ -660,13 +663,13 @@ function ChunkBadgeItem({
         className='w-full h-full rounded-lg flex items-center justify-center font-mono text-xl font-bold relative overflow-hidden'
         style={{
           background: 'linear-gradient(135deg, rgb(59, 130, 246) 0%, rgb(37, 99, 235) 100%)',
-          boxShadow: isTop
+          boxShadow: isBottom
             ? '0 0 16px rgba(59, 130, 246, 0.4), inset 0 1px 0 rgba(255,255,255,0.2)'
             : '0 2px 8px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.1)',
         }}
       >
         {num}
-        {isTop && (
+        {isBottom && (
           <motion.div
             className='absolute inset-0 rounded-lg'
             animate={{
