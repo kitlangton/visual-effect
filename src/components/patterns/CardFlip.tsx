@@ -46,11 +46,17 @@ export function CardFlip({
       }}
     >
       <motion.div
+        key={`flip-${isFlipped}`}
         style={{
           width: size.width,
           height: size.height,
           transformStyle: 'preserve-3d',
           position: 'relative',
+        }}
+        initial={{
+          rotateY: isFlipped ? 0 : 180,
+          scale: 1,
+          z: 0,
         }}
         animate={{
           rotateY: isFlipped ? 180 : 0,
