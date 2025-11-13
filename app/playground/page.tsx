@@ -4,6 +4,7 @@ import { Chunk, Effect } from 'effect';
 import { useState } from 'react';
 import { EffectNode } from '../../src/components/effect';
 import { StreamPullPrototype } from '../../src/components/playground/StreamPullPrototype';
+import { StreamPullPrototypeV2 } from '../../src/components/playground/StreamPullPrototypeV2';
 import { StreamPushPullPrototype } from '../../src/components/playground/StreamPushPullPrototype';
 import {
   BorderPulsePattern,
@@ -742,9 +743,18 @@ export default function PlaygroundPage() {
           </div>
         </section>
 
-        {/* Stream Pull Prototype */}
+        {/* Stream Pull Prototype V2 - With Card Flips */}
         <section className='space-y-4 border border-neutral-700 rounded-lg p-6 bg-neutral-800/50'>
-          <h2 className='text-xl font-semibold text-blue-400'>Stream Pull Prototype</h2>
+          <h2 className='text-xl font-semibold text-blue-400'>Stream Pull Prototype V2 🃏</h2>
+          <p className='text-neutral-400 text-sm'>
+            Cards start face-down (mystery), flip to reveal value when pulled
+          </p>
+          <StreamPullPrototypeV2 />
+        </section>
+
+        {/* Stream Pull Prototype (Original) */}
+        <section className='space-y-4 border border-neutral-700 rounded-lg p-6 bg-neutral-800/50'>
+          <h2 className='text-xl font-semibold text-blue-400'>Stream Pull Prototype (Original)</h2>
           <p className='text-neutral-400 text-sm'>
             Manual pull-based stream - click button to consume each chunk
           </p>
