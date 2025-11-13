@@ -1,5 +1,9 @@
 @import "tailwindcss";
 
+:root, body {
+  background: #0a0a0a;
+}
+
 /* Dark mode scrollbar for all elements */
 * {
   scrollbar-width: thin;
