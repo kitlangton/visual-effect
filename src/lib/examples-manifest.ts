@@ -176,6 +176,26 @@ export const examplesManifest: Array<ExampleMeta> = [
     section: 'scope',
   },
 
+  // Chunks
+  {
+    id: 'chunk-make',
+    name: 'Chunk.make',
+    description: 'Create a chunk from individual values',
+    section: 'chunks',
+  },
+  {
+    id: 'chunk-append',
+    name: 'Chunk.append',
+    description: 'Add an element to the end of a chunk',
+    section: 'chunks',
+  },
+  {
+    id: 'chunk-concat',
+    name: 'Chunk.concat',
+    description: 'Combine two chunks into one',
+    section: 'chunks',
+  },
+
   // Streams
   {
     id: 'stream-range',

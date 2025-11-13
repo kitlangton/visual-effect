@@ -10,6 +10,7 @@ export interface ExampleMeta {
     | 'schedule'
     | 'ref'
     | 'scope'
+    | 'chunks'
     | 'streams';
   order?: number;
 }
