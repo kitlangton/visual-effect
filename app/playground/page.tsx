@@ -6,6 +6,7 @@ import { EffectNode } from '../../src/components/effect';
 import { StreamPullPrototype } from '../../src/components/playground/StreamPullPrototype';
 import { StreamPullPrototypeV2 } from '../../src/components/playground/StreamPullPrototypeV2';
 import { StreamPushPullPrototype } from '../../src/components/playground/StreamPushPullPrototype';
+import { StreamPushPullPrototypeV2 } from '../../src/components/playground/StreamPushPullPrototypeV2';
 import {
   BorderPulsePattern,
   CardFaceBack,
@@ -761,9 +762,22 @@ export default function PlaygroundPage() {
           <StreamPullPrototype />
         </section>
 
-        {/* Stream Push + Pull Prototype */}
+        {/* Stream Push + Pull Prototype V2 - With Card Flips */}
         <section className='space-y-4 border border-neutral-700 rounded-lg p-6 bg-neutral-800/50'>
-          <h2 className='text-xl font-semibold text-purple-400'>Stream Push + Pull Prototype</h2>
+          <h2 className='text-xl font-semibold text-purple-400'>
+            Stream Push + Pull Prototype V2 🃏☁️
+          </h2>
+          <p className='text-neutral-400 text-sm'>
+            Push new face-down cards from cloud, pull and flip from bottom to reveal values
+          </p>
+          <StreamPushPullPrototypeV2 />
+        </section>
+
+        {/* Stream Push + Pull Prototype (Original) */}
+        <section className='space-y-4 border border-neutral-700 rounded-lg p-6 bg-neutral-800/50'>
+          <h2 className='text-xl font-semibold text-purple-400'>
+            Stream Push + Pull Prototype (Original)
+          </h2>
           <p className='text-neutral-400 text-sm'>
             Push new chunks from the cloud, pull from the bottom - simulates async stream sources
           </p>
