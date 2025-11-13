@@ -1,7 +1,7 @@
 'use client';
 
 import { motion } from 'motion/react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 export function StreamPushPullPrototype() {
   const [queue, setQueue] = useState<number[]>([]);
