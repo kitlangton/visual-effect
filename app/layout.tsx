@@ -48,7 +48,7 @@ export const metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
+    <html lang="en" className="bg-neutral-950 text-white">
       {/* `vsc-initialized` is injected by some VS Code extensions after SSR; suppress hydration mismatch warnings */}
       <body>
         <ClientAppContent />
