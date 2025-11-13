@@ -1,4 +1,5 @@
 export { BorderPulsePattern } from './BorderPulsePattern';
+export { ChunkCardStack } from './ChunkCardStack';
 export { GlowPulsePattern } from './GlowPulsePattern';
 export { JitterPattern } from './JitterPattern';
 export { LightSweepPattern } from './LightSweepPattern';
