@@ -4,11 +4,30 @@ import { motion } from 'motion/react';
 import { useState } from 'react';
 
 export function StreamPushPullPrototype() {
-  const [queue, setQueue] = useState([1, 2, 3, 4, 5]);
+  const [queue, setQueue] = useState<number[]>([]);
   const [consumed, setConsumed] = useState<number[]>([]);
   const [pulling, setPulling] = useState(false);
   const [pushing, setPushing] = useState(false);
   const [nextValue, setNextValue] = useState(6);
+  const [isInitializing, setIsInitializing] = useState(true);
+
+  // Initialize queue by adding items one at a time
+  useEffect(() => {
+    let currentIndex = 0;
+    const targetItems = [5, 4, 3, 2, 1]; // Reversed so 1 is at bottom
+
+    const interval = setInterval(() => {
+      if (currentIndex < targetItems.length) {
+        setQueue((prev) => [targetItems[currentIndex], ...prev]);
+        currentIndex++;
+      } else {
+        clearInterval(interval);
+        setIsInitializing(false);
+      }
+    }, 150);
+
+    return () => clearInterval(interval);
+  }, []);
 
   const handlePull = () => {
     if (queue.length === 0 || pulling) return;
@@ -38,14 +57,31 @@ export function StreamPushPullPrototype() {
   };
 
   const handleReset = () => {
-    setQueue([1, 2, 3, 4, 5]);
+    setQueue([]);
     setConsumed([]);
     setPulling(false);
     setPushing(false);
     setNextValue(6);
+    setIsInitializing(true);
+
+    // Re-initialize
+    setTimeout(() => {
+      let currentIndex = 0;
+      const targetItems = [5, 4, 3, 2, 1];
+
+      const interval = setInterval(() => {
+        if (currentIndex < targetItems.length) {
+          setQueue((prev) => [targetItems[currentIndex], ...prev]);
+          currentIndex++;
+        } else {
+          clearInterval(interval);
+          setIsInitializing(false);
+        }
+      }, 150);
+    }, 100);
   };
 
-  const isExhausted = queue.length === 0;
+  const isExhausted = queue.length === 0 && !isInitializing;
 
   return (
     <div className='space-y-6'>
@@ -151,90 +187,76 @@ function ChunkStack({
   return (
     <div className='space-y-2 flex-1'>
       <div className='text-sm text-neutral-400 font-mono'>Source Queue</div>
-      <div className='flex flex-col gap-3 min-h-[280px]'>
+      <div className='relative min-h-[280px] flex items-end'>
         {items.length > 0 ? (
-          items.map((num, idx) => {
-            const isBottom = idx === items.length - 1;
-            const isTop = idx === 0;
-            return (
-              <ChunkBadgeItem
-                key={`queue-${num}-${idx}`}
-                num={num}
-                isBottom={isBottom}
-                isTop={isTop}
-                pulling={pulling && isBottom}
-                pushing={pushing && isTop}
-              />
-            );
-          })
+          <div
+            className='relative'
+            style={{ width: 80, height: 200 }}
+          >
+            {items.map((num, idx) => {
+              const isBottom = idx === items.length - 1;
+              const isTop = idx === 0;
+              const bottomOffset = idx * 12;
+              return (
+                <motion.div
+                  key={`queue-${num}-${idx}`}
+                  initial={{ opacity: 0, y: isTop && pushing ? -20 : 0, scale: 0.8 }}
+                  animate={{
+                    y: 0,
+                    opacity: 1,
+                    scale: 1,
+                    x: pulling && isBottom ? 20 : 0,
+                  }}
+                  transition={{ type: 'spring', stiffness: 180, damping: 25 }}
+                  className='absolute'
+                  style={{
+                    bottom: bottomOffset,
+                    left: 0,
+                    width: 80,
+                    height: 80,
+                  }}
+                >
+                  <div
+                    className='w-full h-full rounded-lg flex items-center justify-center font-mono text-2xl font-bold relative overflow-hidden'
+                    style={{
+                      background:
+                        'linear-gradient(135deg, rgb(59, 130, 246) 0%, rgb(37, 99, 235) 100%)',
+                      boxShadow: isBottom
+                        ? '0 0 16px rgba(59, 130, 246, 0.4), inset 0 1px 0 rgba(255,255,255,0.2)'
+                        : '0 2px 8px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.1)',
+                      border: '1px solid rgba(59, 130, 246, 0.3)',
+                    }}
+                  >
+                    {num}
+                    {isBottom && (
+                      <motion.div
+                        className='absolute inset-0 rounded-lg'
+                        animate={{
+                          boxShadow: [
+                            'inset 0 0 0 2px rgba(59, 130, 246, 0.8)',
+                            'inset 0 0 0 2px rgba(59, 130, 246, 0.3)',
+                            'inset 0 0 0 2px rgba(59, 130, 246, 0.8)',
+                          ],
+                        }}
+                        transition={{
+                          duration: 1.5,
+                          repeat: Infinity,
+                          ease: 'easeInOut',
+                        }}
+                      />
+                    )}
+                  </div>
+                </motion.div>
+              );
+            })}
+          </div>
         ) : (
-          <div className='border-2 border-dashed border-neutral-700 rounded-lg h-16 flex items-center justify-center text-neutral-600 text-sm'>
+          <div className='border-2 border-dashed border-neutral-700 rounded-lg w-20 h-20 flex items-center justify-center text-neutral-600 text-sm'>
             Empty
           </div>
         )}
       </div>
     </div>
-  );
-}
-
-function ChunkBadgeItem({
-  num,
-  isBottom,
-  isTop,
-  pulling,
-  pushing,
-}: {
-  num: number;
-  isBottom: boolean;
-  isTop?: boolean;
-  pulling: boolean;
-  pushing?: boolean;
-}) {
-  return (
-    <motion.div
-      initial={{ opacity: 0, scale: 0.8, y: pushing ? -20 : 0 }}
-      animate={{
-        opacity: isBottom ? 1 : 0.5,
-        scale: 1,
-        x: pulling ? 20 : 0,
-        y: 0,
-      }}
-      transition={{ type: 'spring', stiffness: 180, damping: 25 }}
-      className='relative'
-      style={{
-        width: 64,
-        height: 64,
-      }}
-    >
-      <div
-        className='w-full h-full rounded-lg flex items-center justify-center font-mono text-xl font-bold relative overflow-hidden'
-        style={{
-          background: 'linear-gradient(135deg, rgb(59, 130, 246) 0%, rgb(37, 99, 235) 100%)',
-          boxShadow: isBottom
-            ? '0 0 16px rgba(59, 130, 246, 0.4), inset 0 1px 0 rgba(255,255,255,0.2)'
-            : '0 2px 8px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.1)',
-        }}
-      >
-        {num}
-        {isBottom && (
-          <motion.div
-            className='absolute inset-0 rounded-lg'
-            animate={{
-              boxShadow: [
-                'inset 0 0 0 1px rgba(59, 130, 246, 0.8)',
-                'inset 0 0 0 1px rgba(59, 130, 246, 0.3)',
-                'inset 0 0 0 1px rgba(59, 130, 246, 0.8)',
-              ],
-            }}
-            transition={{
-              duration: 1.5,
-              repeat: Infinity,
-              ease: 'easeInOut',
-            }}
-          />
-        )}
-      </div>
-    </motion.div>
   );
 }
 
