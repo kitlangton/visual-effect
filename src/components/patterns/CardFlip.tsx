@@ -54,6 +54,8 @@ export function CardFlip({
         }}
         animate={{
           rotateY: isFlipped ? 180 : 0,
+          scale: isFlipped ? [1, 1.15, 1] : [1, 1.15, 1],
+          z: isFlipped ? [0, 20, 0] : [0, 20, 0],
         }}
         transition={{
           duration: 0.5,
