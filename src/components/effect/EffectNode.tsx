@@ -1,65 +1,67 @@
-import { AnimatePresence, motion } from "motion/react"
-import { memo, useCallback, useState } from "react"
+import { AnimatePresence, motion } from 'motion/react';
+import { memo, useCallback, useState } from 'react';
 import {
   useVisualEffectNotification,
   useVisualEffectState,
   type VisualEffect,
-} from "@/VisualEffect"
-import { DeathBubble } from "../feedback/DeathBubble"
-import { FailureBubble } from "../feedback/FailureBubble"
-import { NotificationBubble } from "../feedback/NotificationBubble"
-import { EffectContainer } from "./EffectContainer"
-import { EffectContent } from "./EffectContent"
-import { EffectLabel } from "./EffectLabel"
-import { EffectOverlay } from "./EffectOverlay"
+} from '@/VisualEffect';
+import { DeathBubble } from '../feedback/DeathBubble';
+import { FailureBubble } from '../feedback/FailureBubble';
+import { NotificationBubble } from '../feedback/NotificationBubble';
+import { EffectContainer } from './EffectContainer';
+import { EffectContent } from './EffectContent';
+import { EffectLabel } from './EffectLabel';
+import { EffectOverlay } from './EffectOverlay';
 import {
   useEffectAnimations,
   useEffectMotion,
   useRunningAnimation,
   useStateAnimations,
-} from "./useEffectMotion"
+} from './useEffectMotion';
 
 function EffectNodeComponent<A, E>({
   style = {},
   effect,
   labelEffect,
+  customLabel,
 }: {
-  effect: VisualEffect<A, E>
-  style?: React.CSSProperties
-  labelEffect?: VisualEffect<unknown, unknown>
+  effect: VisualEffect<A, E>;
+  style?: React.CSSProperties;
+  labelEffect?: VisualEffect<unknown, unknown>;
+  customLabel?: string;
 }) {
-  const notification = useVisualEffectNotification(effect)
-  const state = useVisualEffectState(effect)
-  const effectMotion = useEffectMotion()
-  const isRunning = state.type === "running"
-  const isFailedOrDeath = state.type === "failed" || state.type === "death"
+  const notification = useVisualEffectNotification(effect);
+  const state = useVisualEffectState(effect);
+  const effectMotion = useEffectMotion();
+  const isRunning = state.type === 'running';
+  const isFailedOrDeath = state.type === 'failed' || state.type === 'death';
 
   // State for error bubble visibility
-  const [showErrorBubble, setShowErrorBubble] = useState(false)
-  const [isHovering, setIsHovering] = useState(false)
+  const [showErrorBubble, setShowErrorBubble] = useState(false);
+  const [isHovering, setIsHovering] = useState(false);
 
   // Apply all animations
-  useRunningAnimation(isRunning, effectMotion)
-  useStateAnimations(state, effectMotion)
-  useEffectAnimations(state, effectMotion, isHovering, setShowErrorBubble)
+  useRunningAnimation(isRunning, effectMotion);
+  useStateAnimations(state, effectMotion);
+  useEffectAnimations(state, effectMotion, isHovering, setShowErrorBubble);
 
   // Stable mouse handlers to avoid creating new functions on every render
   const handleMouseEnter = useCallback(() => {
-    setIsHovering(true)
-    if (isFailedOrDeath) setShowErrorBubble(true)
-  }, [isFailedOrDeath])
+    setIsHovering(true);
+    if (isFailedOrDeath) setShowErrorBubble(true);
+  }, [isFailedOrDeath]);
 
   const handleMouseLeave = useCallback(() => {
-    setIsHovering(false)
-  }, [])
+    setIsHovering(false);
+  }, []);
 
   return (
-    <div style={{ ...style, position: "relative" }}>
+    <div style={{ ...style, position: 'relative' }}>
       {/* Error bubble positioned outside container */}
       <AnimatePresence>
         {isFailedOrDeath &&
           showErrorBubble &&
-          (state.type === "failed" ? (
+          (state.type === 'failed' ? (
             <FailureBubble error={state.error} />
           ) : (
             <DeathBubble error={state.error} />
@@ -69,7 +71,10 @@ function EffectNodeComponent<A, E>({
       {/* Notification bubbles - hidden when error bubbles are shown */}
       <AnimatePresence>
         {!isFailedOrDeath && notification && (
-          <NotificationBubble key={notification.id} notification={notification} />
+          <NotificationBubble
+            key={notification.id}
+            notification={notification}
+          />
         )}
       </AnimatePresence>
 
@@ -77,10 +82,10 @@ function EffectNodeComponent<A, E>({
         style={{
           width: effectMotion.nodeWidth,
           height: 64,
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          position: "relative",
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          position: 'relative',
         }}
       >
         <EffectContainer
@@ -89,13 +94,22 @@ function EffectNodeComponent<A, E>({
           onMouseEnter={handleMouseEnter}
           onMouseLeave={handleMouseLeave}
         >
-          <EffectOverlay isRunning={isRunning} motionValues={effectMotion} />
-          <EffectContent state={state} motionValues={effectMotion} />
+          <EffectOverlay
+            isRunning={isRunning}
+            motionValues={effectMotion}
+          />
+          <EffectContent
+            state={state}
+            motionValues={effectMotion}
+          />
         </EffectContainer>
       </motion.div>
-      <EffectLabel effect={labelEffect ?? effect} />
+      <EffectLabel
+        effect={labelEffect ?? effect}
+        customLabel={customLabel}
+      />
     </div>
-  )
+  );
 }
 
-export const EffectNode = memo(EffectNodeComponent) as typeof EffectNodeComponent
+export const EffectNode = memo(EffectNodeComponent) as typeof EffectNodeComponent;

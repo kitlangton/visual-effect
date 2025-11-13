@@ -1,13 +1,14 @@
 // Content components
-export * from "./CodeBlock"
+export * from './CodeBlock';
 // Display components
-export * from "./display"
+export * from './display';
 // Effect visualization
-export * from "./effect"
+export * from './effect';
 // Feedback components
-export * from "./feedback"
-export * from "./HeaderView"
+export * from './feedback';
+export * from './HeaderView';
 // Renderers
-export * from "./renderers"
+export * from './renderers';
+export * from './StreamTimeline';
 // UI components
-export * from "./ui"
+export * from './ui';
