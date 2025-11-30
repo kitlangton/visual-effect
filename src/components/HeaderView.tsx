@@ -307,8 +307,8 @@ function HeaderViewComponent({
         )}
       </motion.div>
 
-      <div className="flex-1 flex flex-col">
-        <h2 className="text-xl font-semibold text-white flex items-baseline gap-2">
+      <div className="flex-1 flex flex-col select-none">
+        <h2 className="text-xl font-semibold text-white flex items-baseline gap-2 ">
           <span>{name}</span>
           {/* <span className="text-neutral-500"> */}
           {/* <CaretDoubleRightIcon size={16} weight="bold" /> */}
