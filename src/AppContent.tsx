@@ -159,15 +159,15 @@ function AppContentInner() {
         />
 
         <div className="xl:ml-64 p-4 sm:p-8">
-          <div className="w-full flex flex-col items-center max-w-screen-md mx-auto relative z-10">
+          <div className="w-full flex flex-col items-center max-w-3xl mx-auto relative z-10">
             <PageHeader isMuted={isMuted} onMuteToggle={() => setIsMuted(!isMuted)} />
 
             {/* Introduction section */}
-            <div className="w-full max-w-screen-md mt-24 mb-12 p-8 border border-neutral-700/50 rounded-2xl shadow-2xl bg-gradient-to-br from-neutral-900/80 to-neutral-900/40 backdrop-blur-sm font-mono text-neutral-300 text-lg relative overflow-hidden">
+            <div className="w-full max-w-3xl mt-24 mb-12 p-8 border border-neutral-700/50 rounded-2xl shadow-2xl bg-linear-to-br from-neutral-900/80 to-neutral-900/40 backdrop-blur-sm font-mono text-neutral-300 text-lg relative overflow-hidden">
               <div className="relative z-10">
                 <p className="leading-relaxed text-left text-xl font-light">
                   Here are some interactive examples of TypeScript's beautiful{" "}
-                  <EffectLogo className="inline-block  h-4 relative top-[-1px] pr-3 opacity-90" />
+                  <EffectLogo className="inline-block  h-4 relative -top-px pr-3 opacity-90" />
                   <a
                     href="https://effect.website"
                     target="_blank"
@@ -188,7 +188,7 @@ function AppContentInner() {
             </div>
 
             {/* Multiple effect examples and callouts */}
-            <div className="w-full max-w-screen-md flex flex-col items-center gap-y-8 sm:gap-y-12">
+            <div className="w-full max-w-3xl flex flex-col items-center gap-y-8 sm:gap-y-12">
               {appItems.map((item, index) => {
                 const prevItem: AppItem | undefined = index > 0 ? appItems[index - 1] : undefined
                 const showSectionHeader =
@@ -201,7 +201,7 @@ function AppContentInner() {
                       <div className="w-full mt-16 mb-0">
                         <h2 className="text-lg sm:text-2xl font-mono text-neutral-300 tracking-wider font-bold relative">
                           <div className="flex items-center gap-3">
-                            <div className="p-2 rounded-lg bg-gradient-to-br from-neutral-800 to-neutral-900 border border-neutral-700/50  ">
+                            <div className="p-2 rounded-lg bg-linear-to-br from-neutral-800 to-neutral-900 border border-neutral-700/50  ">
                               <HashStraightIcon
                                 weight="bold"
                                 size={20}
@@ -237,7 +237,7 @@ function AppContentInner() {
             </div>
 
             {/* Footer */}
-            <footer className="w-full max-w-screen-md mt-40 mb-12 flex items-center justify-between text-xs sm:text-base">
+            <footer className="w-full max-w-3xl mt-40 mb-12 flex items-center justify-between text-xs sm:text-base">
               {/* Left side */}
               <div className="text-neutral-400 font-bold tracking-wide flex items-center gap-1.5 sm:gap-2">
                 EFFECT OR
