@@ -5,6 +5,7 @@ import path from "node:path"
 import { fileURLToPath } from "node:url"
 import { Resvg } from "@resvg/resvg-js"
 // biome-ignore lint/correctness/noUnusedImports: We actually need it, liar.
+// @ts-expect-error - Needed for satori runtime even though not explicitly used in code
 import React from "react"
 import satori from "satori"
 import { examplesManifest } from "../src/lib/examples-manifest.js"
