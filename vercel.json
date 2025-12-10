@@ -1,7 +1,7 @@
 {
-  "buildCommand": "pnpm run build",
+  "buildCommand": "bun run build",
+  "installCommand": "bun install",
   "outputDirectory": "out",
-  "installCommand": "pnpm install",
   "git": {
     "deploymentEnabled": false
   },
