@@ -20,6 +20,7 @@ import EffectAllShortCircuit from "@/examples/effect-all-short-circuit"
 import EffectDie from "@/examples/effect-die"
 import EffectEventually from "@/examples/effect-eventually"
 import EffectFail from "@/examples/effect-fail"
+import EffectFirstSuccessOf from "@/examples/effect-firstsuccessof"
 import EffectForEach from "@/examples/effect-foreach"
 import EffectOrElse from "@/examples/effect-orelse"
 import EffectPartition from "@/examples/effect-partition"
@@ -53,6 +54,7 @@ const exampleComponentById: Record<string, ExampleComponent> = {
   "effect-all": EffectAll,
   "effect-die": EffectDie,
   "effect-eventually": EffectEventually,
+  "effect-firstsuccessof": EffectFirstSuccessOf,
   "effect-fail": EffectFail,
   "effect-foreach": EffectForEach,
   "effect-orelse": EffectOrElse,

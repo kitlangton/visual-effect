@@ -94,6 +94,12 @@ export const examplesManifest: Array<ExampleMeta> = [
     section: "error handling",
   },
   {
+    id: "effect-firstsuccessof",
+    name: "Effect.firstSuccessOf",
+    description: "Try effects sequentially and return the first successful result",
+    section: "error handling",
+  },
+  {
     id: "effect-timeout",
     name: "Effect.timeout",
     description: "Add a time limit to an effect, failing with timeout if exceeded",
