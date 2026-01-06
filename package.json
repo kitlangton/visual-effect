@@ -54,7 +54,7 @@
     "@vercel/analytics": "^1.6.1",
     "effect": "^3.19.10",
     "motion": "^12.23.26",
-    "next": "^16.0.8",
+    "next": "16.0.10",
     "prism-react-renderer": "^2.4.1",
     "react": "^19.2.1",
     "react-dom": "^19.2.1",
