@@ -31,3 +31,4 @@ dist-ssr
 public/og/
 tsconfig.tsbuildinfo
 .mcp.json
+.claude
